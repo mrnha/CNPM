@@ -5,9 +5,9 @@ from django.http import HttpResponse
 def home(request):
     context={}
     return render(request, 'app/home.html', context)
-def home(request):
+def cart(request):
     context={}
     return render(request, 'app/cart.html', context)
-def home(request):
+def checkout(request):
     context={}
     return render(request, 'app/checkout.html', context)

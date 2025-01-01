@@ -89,7 +89,7 @@
                     
                   </ul>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">Giỏ Hàng</a>
+                    <a class="nav-link" href="{% url 'cart' %}">Giỏ Hàng</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="#">Đăng Nhập</a>
@@ -106,6 +106,7 @@
           {% block banner_slider%} {% endblock banner_slider %}
           {% block main-content%} {% endblock main-content %}
           {% block cart_content %} {% endblock cart_content %}
+          {% block content_checkout %} {% endblock content_checkout %}
           <!--footer-->
           <footer class = "container--fluid bg-success text-center fixed-bottom p-2 mt-5">   
           Footer

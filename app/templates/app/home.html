@@ -50,117 +50,21 @@
   </div>
 {% endblock banner_slider %}
 {% block main-content %}
-<div class="container">
     <div class="row">
-        <!-- Sản phẩm 1 -->
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="{% static 'app/images/cow-ghee.png'%}" class="card-img-top" alt="Sữa">
-                <div class="card-body">
-                    <h5 class="card-title"><strong>Sữa...</strong></h5>
-                    <hr>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <button class="btn btn-outline-secondary add-btn">Thêm vào giỏ hàng</button>
-                            <a class="btn btn-outline-success" href="#">Xem</a>
-                        </div>
-                        <h5 class="mb-0"><strong>200.000 VND</strong></h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sản phẩm 2 -->
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="{% static 'app/images/cow-milk.png'%}" class="card-img-top" alt="Sữa">
-                <div class="card-body">
-                    <h5 class="card-title"><strong>Sữa...</strong></h5>
-                    <hr>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <button class="btn btn-outline-secondary add-btn">Thêm vào giỏ hàng</button>
-                            <a class="btn btn-outline-success" href="#">Xem</a>
-                        </div>
-                        <h5 class="mb-0"><strong>200.000 VND</strong></h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sản phẩm 3 -->
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="{% static 'app/images/curd-premium.png'%}" class="card-img-top" alt="Sữa">
-                <div class="card-body">
-                    <h5 class="card-title"><strong>Sữa...</strong></h5>
-                    <hr>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <button class="btn btn-outline-secondary add-btn">Thêm vào giỏ hàng</button>
-                            <a class="btn btn-outline-success" href="#">Xem</a>
-                        </div>
-                        <h5 class="mb-0"><strong>200.000 VND</strong></h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <!-- Sản phẩm 1 -->
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            <img src="{% static 'app/images/cow-ghee.png'%}" class="card-img-top" alt="Sữa">
-            <div class="card-body">
-                <h5 class="card-title"><strong>Sữa...</strong></h5>
+        {%for product in products%}
+        <div class="col-lg-4" style="width=100%">
+            <img class = "thumbnail" src="{% static 'app/images/placeholder.png' %}" class = "img-responsive" width="100%" height="200"> 
+            <div class="box-element product">
+                <h6><strong> {{ product.name}} </strong> </h6>
                 <hr>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <button class="btn btn-outline-secondary add-btn">Thêm vào giỏ hàng</button>
-                        <a class="btn btn-outline-success" href="#">Xem</a>
-                    </div>
-                    <h5 class="mb-0"><strong>200.000 VND</strong></h5>
-                </div>
-            </div>
-        </div>
-    </div>
+                <button class="btn btn-outline-secondary add-btn" >Add to Cart</button>
+                <a class="btn btn-outline-success" href="#">View</a>
+                <h3 style="display:inline-block; float:right"><strong>VND{{product.price | floatformat:3 }}</strong></h3>
 
-    <!-- Sản phẩm 2 -->
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            <img src="{% static 'app/images/cow-milk.png'%}" class="card-img-top" alt="Sữa">
-            <div class="card-body">
-                <h5 class="card-title"><strong>Sữa...</strong></h5>
-                <hr>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <button class="btn btn-outline-secondary add-btn">Thêm vào giỏ hàng</button>
-                        <a class="btn btn-outline-success" href="#">Xem</a>
-                    </div>
-                    <h5 class="mb-0"><strong>200.000 VND</strong></h5>
-                </div>
-            </div>
-        </div>
+            </div> 
+        </div>  
+        {%endfor%}      
     </div>
-
-    <!-- Sản phẩm 3 -->
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            <img src="{% static 'app/images/curd-premium.png'%}" class="card-img-top" alt="Sữa">
-            <div class="card-body">
-                <h5 class="card-title"><strong>Sữa...</strong></h5>
-                <hr>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <button class="btn btn-outline-secondary add-btn">Thêm vào giỏ hàng</button>
-                        <a class="btn btn-outline-success" href="#">Xem</a>
-                    </div>
-                    <h5 class="mb-0"><strong>200.000 VND</strong></h5>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
+    
+<br /><br  /><br /> 
 {% endblock main-content %}

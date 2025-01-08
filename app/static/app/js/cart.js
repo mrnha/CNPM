@@ -4,11 +4,13 @@ for(var i=0;i < updateBtns.length;i++){
     updateBtns[i].addEventListener('click', function() {
         var productId = this.dataset.product
         var action = this.dataset.action
+        console.log('product',productId,'action',action);
         console.log('productId',productId,'action',action);
         console.log('user:', user)
-        if (user==="AnoymousUser"){
+        if (user === "AnonymousUser"){
             console.log('user not logged in')
         }else {
+            
             updateUserOrder(productId,action)
 
             }
@@ -16,6 +18,7 @@ for(var i=0;i < updateBtns.length;i++){
 
     })
 }
+
 function updateUserOrder(productId,action){
     console.log('user logged in, success add')
     var url = '/update_item/'
@@ -25,13 +28,14 @@ function updateUserOrder(productId,action){
             'Content-Type':'application/json',
             'X-CSRFToken':csrftoken
         },
-        body: JSON.stringify({'productId':productId,'action':action})
-        .then((response) =>{
-            return response.json()
+            body: JSON.stringify({'productId':productId,'action':action})
         })
-        .then((data) =>{
-            console.log('data',data)
+        .then((response) => { return response.json() })
+        .then((data) => {
+            console.log('data', data);
+            
         })
-
-    })
-}
+        .catch((error) => {
+            console.error('Error:', error);
+        })
+    }

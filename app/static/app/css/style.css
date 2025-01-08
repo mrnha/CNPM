@@ -102,3 +102,21 @@
     margin: 0;
 }
 
+.messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    min-width: 300px;
+}
+
+.alert {
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.alert-danger {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+}

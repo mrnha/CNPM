@@ -97,45 +97,46 @@
     </button>
     <style>
       .carousel {
-          margin-bottom: 30px;  /* Thêm khoảng cách dưới carousel */
-      }
-      
-      .carousel-inner {
-          max-width: 1200px;  /* Giới hạn chiều rộng tối đa */
-          margin: 0 auto;     /* Căn giữa carousel */
-      }
-      
-      .carousel-caption {
-          background: rgba(0, 0, 0, 0.5);  /* Thêm nền tối cho chữ */
-          padding: 10px;
-          border-radius: 5px;
-      }
-      
-      @media (max-width: 768px) {
-          .carousel-inner img {
-              height: 300px !important;  /* Chiều cao nhỏ hơn cho mobile */
-          }
-      }
-      </style>
+        margin-bottom: 30px;  /* Thêm khoảng cách dưới carousel */
+    }
+    
+    .carousel-inner {
+        max-width: 1200px;  /* Giới hạn chiều rộng tối đa */
+        margin: 0 auto;     /* Căn giữa carousel */
+    }
+    
+    .carousel-caption {
+        background: rgba(0, 0, 0, 0.5);  /* Thêm nền tối cho chữ */
+        padding: 10px;
+        border-radius: 5px;
+    }
+    
+    @media (max-width: 768px) {
+        .carousel-inner img {
+            height: 300px !important;  /* Chiều cao nhỏ hơn cho mobile */
+        }
+    }
+  </style>
   </div>
   
 {% endblock banner_slider %}
 {% block main-content %}
-    <div class="row">
+    <div class="row" style="width:100%">
         {%for product in products%}
-        <div class="col-lg-4" style="width=100%">
+        <div class="col-lg-4">
             <img class = "thumbnail" src="{{product.ImageURL}}" class = "img-responsive" width="100%" height="300"> 
             <div class="box-element product">
                 <h6><strong> {{ product.name}} </strong> </h6>
                 <hr>
-                <button data-product={{product.id}} data-action="add" class="btn btn-outline-secondary add-btn update-cart" >Add to Cart</button>
-                <a class="btn btn-outline-success" href="#">View</a>
+                <button data-product={{product.id}} data-action="add" class="btn btn-outline-secondary add-btn update-cart" >Thêm vào giỏ hàng</button>
+                <a class="btn btn-outline-success" href="#">Xem</a>
                 <h3 style="display:inline-block; float:right"><strong>{{product.price |floatformat:3 }} VNĐ</strong></h3>
 
             </div> 
         </div>  
         {%endfor%}      
     </div>
+    <br /><br  /><br /> 
     <!-- Thêm footer mới -->
 <footer class="footer mt-5">
   <div class="container">

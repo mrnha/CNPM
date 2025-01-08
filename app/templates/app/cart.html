@@ -39,7 +39,7 @@
 
 	<!-- Cart Items -->
 	{% for item in items %}
-	<div class="row py-3 border-bottom align-items-center">
+	<div class="row py-3 border-bottom align-items-center"data-product="{{item.product.id}}">
 		<div class="col-md-3 col-6">
 			<img class="img-fluid rounded" style="max-width: 100px;" src="{{item.product.ImageURL}}">
 		</div>
@@ -52,11 +52,11 @@
 		<div class="col-md-2 col-4 mt-3 mt-md-0">
 			<div class="quantity-wrapper d-flex align-items-center">
 				<div class="quantity-controls d-flex align-items-center border rounded">
-					<button class="btn btn-quantity px-2 py-1" data-action="decrease">
+					<button class="btn btn-quantity px-2 py-1" data-action="remove">
 						<i class="fas fa-minus"></i>
 					</button>
 					<span class="quantity px-3">{{item.quantity}}</span>
-					<button class="btn btn-quantity px-2 py-1" data-action="increase">
+					<button class="btn btn-quantity px-2 py-1" data-action="add">
 						<i class="fas fa-plus"></i>
 					</button>
 				</div>

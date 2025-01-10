@@ -109,18 +109,19 @@
                    
                     
                   </ul>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'cart' %}">Giỏ Hàng</a>
-                  </li>
+                 
                   <li class="nav-item">
                     <a class="nav-link" href="#">Đăng Nhập</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="#">Đăng Ký</a>
                   </li>
-              
-              </ul>
-            </div>
+                </ul>
+
+                 <div class="form-inline my-2 my-1g-0 position-relative"> 
+                   <a href="{% url 'cart' %}"><img id="cart-icon" src="{% static 'app/images/cart.jpeg'%}" style="width: 30px; height: 30px;"></a>
+                   <p id="cart-total" style="position: absolute; top: -10px; right: -10px; margin: 0;">{{cartItems}}</p>
+                </div>
           </nav>
         
           <!--main body-->
@@ -128,7 +129,10 @@
           {% block main-content%} {% endblock main-content %}
           {% block cart_content %} {% endblock cart_content %}
           {% block content_checkout %} {% endblock content_checkout %}
-            
+          {% block register%} {% endblock register %}
+          {% block login%} {% endblock login %}
+        
+          
           <script src="{%static 'app/js/cart.js'%}"> </script>          
     </body>
 </html>

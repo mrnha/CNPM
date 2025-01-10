@@ -1,9 +1,42 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 
 from .models import *
 import json
+
+
 # Create your views here.
+def register(request):
+    form = CreateUserForm()
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    context = {'form': form}
+    return render(request, 'app/register.html', context)
+        
+def loginPage(request):     
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        try:
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+            else:
+                messages.error(request, 'Tên đăng nhập hoặc mật khẩu không đúng')
+        except:
+            messages.error(request, 'Đã xảy ra lỗi trong quá trình đăng nhập')
+
+    return render(request, 'app/login.html')
+
 def home(request):
     products = Product.objects.all()
     context = {'products': products}
@@ -35,19 +68,18 @@ def checkout(request):
 def updateItem(request):
     data = json.loads(request.body)
     productId = data['productId']
-    action =data['action']
-    customer = request.user.customer
-    product = Product.objects.get(id=productId)
-    order, created = Order.objects.get_or_create(Customer=customer, complete=False)
-    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
-    
-    if action == 'add':
-        orderItem.quantity += 1
+    action  = data['action']
+    customer =request.user.customer
+    product = Product.objects.get(id = productId)
+    order, created = Order.objects.get_or_create(Customer =customer,complete=False)
+    orderItem, created = OrderItem.objects.get_or_create(order =order,product =product)
+    if action=='add':
+        orderItem.quantity +=1
+    elif action =='remove':
+        orderItem.quantity -=1
         orderItem.save()
-    elif action == 'remove':
-        orderItem.quantity-= 1
-        orderItem.save()
-        if orderItem.quantity <= 0:
+        if orderItem.quantity <=0:
             orderItem.delete()
-    
-    return JsonResponse('Item was updated', safe=False)
+            return JsonResponse('Item was added', safe=False)
+        
+

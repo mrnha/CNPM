@@ -97,18 +97,12 @@
                   <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
               </div>
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Người dùng
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Trang cá nhân</a></li>
-                    <li><a class="dropdown-item" href="#">Đơn hàng</a></li>
-                    <li><a class="dropdown-item" href="#">Thoát</a></li>
-                   
-                    
-                  </ul>
+                <div class="form inline my-2 my-lg-0">  
+                <span>Hi!! {{request.user}} </span> 
+                <span><a href = "{% url 'logout'%}">Thoát</a></span>
+
+                </div>
+
                  
                   <li class="nav-item">
                     <a class="nav-link" href="#">Đăng Nhập</a>

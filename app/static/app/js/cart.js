@@ -59,5 +59,7 @@ function updateUserOrder(productId, action) {
     })
     .catch(error => {
         console.error('Error:', error);
-    });
+    } );
 }
+
+    

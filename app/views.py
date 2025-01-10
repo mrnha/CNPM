@@ -19,7 +19,7 @@ def register(request):
     context = {'form': form}
     return render(request, 'app/register.html', context)
         
-def loginPage(request):     
+def loginPage(request):  
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -36,6 +36,9 @@ def loginPage(request):
             messages.error(request, 'Đã xảy ra lỗi trong quá trình đăng nhập')
 
     return render(request, 'app/login.html')
+def logoutPage(request):
+    logout(request)
+    return redirect('login')
 
 def home(request):
     products = Product.objects.all()
@@ -43,7 +46,7 @@ def home(request):
     return render(request, 'app/home.html', context)
 def cart(request):
     if request.user.is_authenticated:
-        customer = request.user.customer
+        customer = request.user
         order, created = Order.objects.get_or_create(Customer=customer, complete=False)
         items = order.orderitem_set.all()
     else:
@@ -56,7 +59,7 @@ def cart(request):
 def checkout(request):
     context={}
     if request.user.is_authenticated:
-        customer = request.user.customer
+        customer = request.user
         order, created = Order.objects.get_or_create(Customer=customer, complete=False)
         items = order.orderitem_set.all()
     else:
@@ -68,18 +71,26 @@ def checkout(request):
 def updateItem(request):
     data = json.loads(request.body)
     productId = data['productId']
-    action  = data['action']
-    customer =request.user.customer
-    product = Product.objects.get(id = productId)
-    order, created = Order.objects.get_or_create(Customer =customer,complete=False)
-    orderItem, created = OrderItem.objects.get_or_create(order =order,product =product)
-    if action=='add':
-        orderItem.quantity +=1
-    elif action =='remove':
-        orderItem.quantity -=1
+    action = data['action']
+    
+    if request.user.is_authenticated:
+        customer = request.user
+        product = Product.objects.get(id=productId)
+        order, created = Order.objects.get_or_create(Customer=customer, complete=False)
+        orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+        
+        if action == 'add':
+            orderItem.quantity += 1
+        elif action == 'remove':
+            orderItem.quantity -= 1
+            
         orderItem.save()
-        if orderItem.quantity <=0:
+        
+        if orderItem.quantity <= 0:
             orderItem.delete()
-            return JsonResponse('Item was added', safe=False)
+            
+        return JsonResponse({'status': 'success'}, safe=False)
+    
+    return JsonResponse({'error': 'User not authenticated'}, status=401)
         
 

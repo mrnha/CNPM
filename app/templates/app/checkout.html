@@ -1,7 +1,7 @@
 {% extends 'app/base.html' %}
 {% load static %}
 {% block content_checkout %}
-     <div class="row">
+     <div class="row" style='width:100%'>
 		<div class="col-lg-6">
 			<div class="box-element" id="form-wrapper">
 				<form id="form">
@@ -61,8 +61,8 @@
 					<div style="flex:1"><p>{{item.quantity}}</p></div>
 				</div>
 				{%endfor%}
-				<h5>Items:   {{get_cart_items}}</h5>
-				<h5>Total:   {{get_cart_total}}</h5>
+				<h5>Items:   {{order.get_cart_items}}</h5>
+				<h5>Total:   {{order.get_cart_total}}</h5>
 				
 				
 			</div>

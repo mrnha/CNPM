@@ -1,7 +1,7 @@
 {% extends 'app/base.html' %}
 {% load static %}
 {% block cart_content %}
-<div class="container py-4">
+<div class="container py-4" style='width:100%'>
 	<!-- Shopping Cart Header -->
 	<div class="row mb-4">
 		<div class="col-12">
@@ -17,7 +17,7 @@
 						</div>
 						<div class="me-4">
 							<span class="text-muted">Tổng tiền:</span>
-							<strong class="ms-2">{{order.cart_total}}</strong>
+							<strong class="ms-2">{{order.get_cart_total}}</strong>
 						</div>
 						<a class="btn btn-success" href="{% url 'checkout' %}">
 							Thanh toán <i class="fas fa-arrow-right ms-2"></i>

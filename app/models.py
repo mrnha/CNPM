@@ -9,7 +9,6 @@ class CreateUserForm(UserCreationForm):
         model =User
         fields =['username','email','first_name','last_name','password1','password2']
 
-    
 class Product(models.Model):
 
     name = models.CharField(max_length=200, null=True)

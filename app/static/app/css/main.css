@@ -55,7 +55,9 @@ h1,h2,h3,h4,h5,h6{
 }
 
 .row-image{
-	width: 100px;
+	width: 70px;
+	height: auto;
+	object-fit: contain;
 }
 
 .form-field{

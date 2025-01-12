@@ -62,7 +62,7 @@
         <nav class="navbar navbar-expand-lg bg-light">
             <div class="container-fluid">
                <a class="navbar-brand" href="{% url 'home' %}">
-              <img src="{% static 'app/images/logo.png' %}" width="70" height="70"> <!--logo-->
+              <img src="{% static 'app/images/logo.png' %}" width="50" height="70"> <!--logo-->
               <a/>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -112,15 +112,9 @@
                   </li>
                 </ul>
 
-                 <div class="form-inline my-2 my-1g-0"> 
-                   <a href="{% url 'cart' %}" class="position-relative d-inline-block">
-                       <img id="cart-icon" src="{% static 'app/images/cart.jpeg'%}" style="width: 30px; height: 30px;">
-                       {% if request.user.is_authenticated %}
-                           <span id="cart-total" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                               {{order.get_cart_items}}
-                           </span>
-                       {% endif %}
-                   </a>
+                 <div class="form-inline my-2 my-1g-0 position-relative"> 
+                   <a href="{% url 'cart' %}"><img id="cart-icon" src="{% static 'app/images/cart.jpeg'%}" style="width: 30px; height: 30px;"></a>
+                   <p id="cart-total" style="position: absolute; top: -10px; right: -10px; margin: 0;">{{cartItems}}</p>
                 </div>
           </nav>
         
@@ -129,6 +123,10 @@
           {% block main-content%} {% endblock main-content %}
           {% block cart_content %} {% endblock cart_content %}
           {% block content_checkout %} {% endblock content_checkout %}
+          {% block register%} {% endblock register %}
+          {% block login%} {% endblock login %}
+        
+          
             
           <script src="{%static 'app/js/cart.js'%}"> </script>          
     </body>

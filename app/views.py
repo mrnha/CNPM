@@ -61,7 +61,6 @@ def cart(request):
     else:
         items = []
         order = {'get_cart_total':0, 'get_cart_items':0}
-        order = {'order.get_cart_items':0,'order.get_cart_total':0}
         cartItems = order['get_cart_items']
         
         

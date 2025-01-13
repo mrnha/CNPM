@@ -98,18 +98,18 @@
                 </form>
               </div>
                 <div class="form inline my-2 my-lg-0">  
-                <span>Chào! {{request.user}} </span> 
+                <span>&nbsp;Chào! {{request.user}} </span> 
                 <span><a href = "{% url 'logout'%}">Thoát</a></span>
 
                 </div>
 
                  
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Đăng Nhập</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Đăng Ký</a>
-                  </li>
+                <div class="form inline my-2 my-lg-0">
+                  <a class="nav-link" href="{% url 'login' %}">&nbsp;Đăng Nhập</a>
+                </div>
+                <div class="form inline my-2 my-lg-0">
+                  <a class="nav-link" href="{% url 'register' %}">&nbsp;Đăng Ký&nbsp;</a>
+                </div>
                 </ul>
 
                  <div class="form-inline my-2 my-1g-0 position-relative"> 

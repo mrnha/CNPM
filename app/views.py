@@ -8,11 +8,6 @@ from django.contrib import messages
 from .models import *
 import json
 # Create your views here.
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> fd0ed72 (add)
 def category(request):
     categories = Category.objects.filter(is_sub=False)
     active_category =request.GET.get('category','')
@@ -40,13 +35,13 @@ def search(request):
     return render(request, 'app/search.html',{"searched":searched,"keys":keys,"items":items,"cartItems":cartItems,"order":order})
 
 
->>>>>>> a68a6af (add)
 def register(request):
     form = CreateUserForm()
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Tạo tài khoản thành công')
             return redirect('login')
     context = {'form': form}
     return render(request, 'app/register.html', context)
@@ -77,62 +72,70 @@ def home(request):
         order, created = Order.objects.get_or_create(Customer=customer, complete=False)
         items = order.orderitem_set.all()
         cartItems = order.get_cart_items
+        user_login = "show"
+        User_not_login = "hidden"
     else:
         items = []
         order = {'get_cart_items': 0, 'get_cart_total': 0}
         cartItems = order['get_cart_items']
-<<<<<<< HEAD
-    products = Product.objects.all()
-    context = {'products': products, 'order': order, 'items': items,'cartItems':cartItems}
-=======
         user_login = "hidden"
         User_not_login = "show"
     categories = Category.objects.filter(is_sub=False)
     products = Product.objects.all()
     context = {'products': products, 'order': order, 'items': items, 'cartItems': cartItems, 'user_login': user_login, 'User_not_login': User_not_login,'categories': categories}
-<<<<<<< HEAD
->>>>>>> a68a6af (add)
-=======
->>>>>>> fd0ed72 (add)
     return render(request, 'app/home.html', context)
 def cart(request):
     if request.user.is_authenticated:
         customer = request.user
         order, created = Order.objects.get_or_create(Customer=customer, complete=False)
         items = order.orderitem_set.all()
+
         cartItems = order.get_cart_items
-<<<<<<< HEAD
-=======
 
         user_login = "show"
         User_not_login = "hidden"
-<<<<<<< HEAD
->>>>>>> a68a6af (add)
-=======
->>>>>>> fd0ed72 (add)
         
     else:
         items = []
         order = {'get_cart_total': 0, 'get_cart_items': 0}
         cartItems = order['get_cart_items']
+        user_login = "hidden"
+        User_not_login = "show"
         
         
-    context = {'items': items, 'order': order,'cartItems':cartItems}
+        
+    context = {'items': items, 'order': order,'user_login':user_login,'User_not_login':User_not_login,'cartItems':cartItems}
+
     return render(request, 'app/cart.html', context)
+
+def new_func(order):
+    cartItems = order['get_cart_items']
+    return cartItems
 def checkout(request):
     context={}
     if request.user.is_authenticated:
         customer = request.user
         order, created = Order.objects.get_or_create(Customer=customer, complete=False)
         items = order.orderitem_set.all()
+
         cartItems = order.get_cart_items
+
+        user_login = "show"
+        User_not_login = "hidden"
+
         
     else:
         items = []
         order = {'order.get_cart_items':0,'order.get_cart_total':0}
+
         cartItems = order['get_cart_items']
         
-    context = {'items': items, 'order': order,'cartItems':cartItems}
+        user_login = "hidden"
+        User_not_login = "show"
+        
+        
+    context = {'items': items, 'order': order,'user_login':user_login,'User_not_login':User_not_login,'cartItems':cartItems}
+
     return render(request, 'app/checkout.html', context)
 def updateItem(request):
     data = json.loads(request.body)

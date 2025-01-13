@@ -101,10 +101,11 @@ def cart(request):
         cartItems = order['get_cart_items']
         user_login = "hidden"
         User_not_login = "show"
+    categories = Category.objects.filter(is_sub=False)
         
         
         
-    context = {'items': items, 'order': order,'user_login':user_login,'User_not_login':User_not_login,'cartItems':cartItems}
+    context = {'items': items, 'order': order,'user_login':user_login,'User_not_login':User_not_login,'cartItems':cartItems,'categories':categories}
 
     return render(request, 'app/cart.html', context)
 
@@ -132,9 +133,10 @@ def checkout(request):
         
         user_login = "hidden"
         User_not_login = "show"
+    categories = Category.objects.filter(is_sub=False)
         
         
-    context = {'items': items, 'order': order,'user_login':user_login,'User_not_login':User_not_login,'cartItems':cartItems}
+    context = {'items': items, 'order': order,'user_login':user_login,'User_not_login':User_not_login,'cartItems':cartItems,'categories':categories}
 
     return render(request, 'app/checkout.html', context)
 def updateItem(request):

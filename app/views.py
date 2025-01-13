@@ -9,7 +9,10 @@ from .models import *
 import json
 # Create your views here.
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> fd0ed72 (add)
 def category(request):
     categories = Category.objects.filter(is_sub=False)
     active_category =request.GET.get('category','')
@@ -87,7 +90,10 @@ def home(request):
     categories = Category.objects.filter(is_sub=False)
     products = Product.objects.all()
     context = {'products': products, 'order': order, 'items': items, 'cartItems': cartItems, 'user_login': user_login, 'User_not_login': User_not_login,'categories': categories}
+<<<<<<< HEAD
 >>>>>>> a68a6af (add)
+=======
+>>>>>>> fd0ed72 (add)
     return render(request, 'app/home.html', context)
 def cart(request):
     if request.user.is_authenticated:
@@ -100,7 +106,10 @@ def cart(request):
 
         user_login = "show"
         User_not_login = "hidden"
+<<<<<<< HEAD
 >>>>>>> a68a6af (add)
+=======
+>>>>>>> fd0ed72 (add)
         
     else:
         items = []

@@ -78,11 +78,9 @@
                       Sản Phẩm
                     </a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Sữa</a></li>
-                      <li><a class="dropdown-item" href="#">Tã và Bỉm</a></li>
-                      <li><a class="dropdown-item" href="#">Đồ dùng cho mẹ và bé</a></li>
-                      <li><a class="dropdown-item" href="#">Thực phẩm dinh dưỡng</a></li>
-                      
+                      {% for category in categories %}
+                      <li><a class="dropdown-item" href="{% url 'category'%}?category={{category.slug}}">{{ category.name }}</a></li>
+                      {% endfor %}
                     </ul>
                     <li class="nav-item">
                       <a class="nav-link" href="{% url 'cart'%}">Cart</a>
@@ -92,8 +90,14 @@
                     <a class="nav-link" href="#">Liên Hệ</a>
                   </li>
                 </ul>
+<<<<<<< HEAD
                 <form class="d-flex" role="search">
                   <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+=======
+                <form class="d-flex" role="search" method= POST action="{% url 'search' %}">
+                  {% csrf_token %}
+                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searched">
+>>>>>>> a68a6af (add)
                   <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
               </div>
@@ -125,9 +129,15 @@
           {% block content_checkout %} {% endblock content_checkout %}
           {% block register%} {% endblock register %}
           {% block login%} {% endblock login %}
+<<<<<<< HEAD
         
           
             
           <script src="{%static 'app/js/cart.js'%}"> </script>          
+=======
+          {% block checkout%} {% endblock checkout %}
+          <script src="{%static 'app/js/cart.js'%}"> </script> 
+                   
+>>>>>>> a68a6af (add)
     </body>
 </html>

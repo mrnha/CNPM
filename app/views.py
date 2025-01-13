@@ -8,6 +8,36 @@ from django.contrib import messages
 from .models import *
 import json
 # Create your views here.
+<<<<<<< HEAD
+=======
+def category(request):
+    categories = Category.objects.filter(is_sub=False)
+    active_category =request.GET.get('category','')
+    products = []
+    if active_category:
+        products= Product.objects.filter(category__slug=active_category)
+    context = {'products':products,'categories':categories,'active_category':active_category}
+    return render(request, 'app/category.html', context)
+
+def search(request):
+    searched = request.GET.get('searched', '')
+    if request.method == "POST":
+        searched = request.POST['searched']
+        keys = Product.objects.filter(name__contains=searched)
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(Customer=customer, complete=False)
+        items = order.orderitem_set.all()
+
+        cartItems = order.get_cart_items     
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+    return render(request, 'app/search.html',{"searched":searched,"keys":keys,"items":items,"cartItems":cartItems,"order":order})
+
+
+>>>>>>> a68a6af (add)
 def register(request):
     form = CreateUserForm()
     if request.method == 'POST':
@@ -48,8 +78,16 @@ def home(request):
         items = []
         order = {'get_cart_items': 0, 'get_cart_total': 0}
         cartItems = order['get_cart_items']
+<<<<<<< HEAD
     products = Product.objects.all()
     context = {'products': products, 'order': order, 'items': items,'cartItems':cartItems}
+=======
+        user_login = "hidden"
+        User_not_login = "show"
+    categories = Category.objects.filter(is_sub=False)
+    products = Product.objects.all()
+    context = {'products': products, 'order': order, 'items': items, 'cartItems': cartItems, 'user_login': user_login, 'User_not_login': User_not_login,'categories': categories}
+>>>>>>> a68a6af (add)
     return render(request, 'app/home.html', context)
 def cart(request):
     if request.user.is_authenticated:
@@ -57,10 +95,16 @@ def cart(request):
         order, created = Order.objects.get_or_create(Customer=customer, complete=False)
         items = order.orderitem_set.all()
         cartItems = order.get_cart_items
+<<<<<<< HEAD
+=======
+
+        user_login = "show"
+        User_not_login = "hidden"
+>>>>>>> a68a6af (add)
         
     else:
         items = []
-        order = {'get_cart_total':0, 'get_cart_items':0}
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
         cartItems = order['get_cart_items']
         
         

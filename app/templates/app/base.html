@@ -97,12 +97,12 @@
               </div>
               {% if user.is_authenticated %}
               <div class="form inline my-2 my-lg-0">
-                <span>Hi!! {{ request.user }} </span> 
+                <span>&nbspChào!! {{ request.user }} </span> 
                 <span><a href="{% url 'logout' %}">Thoát</a></span>
               </div>
               {% else %}
               <div class="form inline my-2 my-lg-0">
-                <span><a href="{% url 'login' %}">Đăng nhập</a></span>
+                <span><a href="{% url 'login' %}">&nbspĐăng nhập</a></span>
                 <span><a href="{% url 'register' %}">Đăng ký</a></span>
               </div>
               {% endif %}

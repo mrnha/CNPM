@@ -8,6 +8,35 @@ from django.contrib import messages
 from .models import *
 import json
 # Create your views here.
+def detail (request):
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(Customer=customer, complete=False)
+        items = order.orderitem_set.all()
+
+        cartItems = order.get_cart_items
+
+        user_login = "show"
+        User_not_login = "hidden"
+        
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+        user_login = "hidden"
+        User_not_login = "show"
+    
+    id = request.GET.get('id', '')
+    products = Product.objects.filter(id=id)
+    categories = Category.objects.filter(is_sub=False)
+        
+        
+        
+    context = {'items': items, 'order': order,'user_login':user_login,'User_not_login':User_not_login,'cartItems':cartItems,'categories':categories,'products':products}
+
+    return render(request, 'app/detail.html', context)
+
+
 def category(request):
     categories = Category.objects.filter(is_sub=True)
     active_category =request.GET.get('category','')

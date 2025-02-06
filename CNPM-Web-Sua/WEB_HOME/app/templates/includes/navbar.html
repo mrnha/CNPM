@@ -1,0 +1,117 @@
+      {% load static %}
+      <!-- Navbar -->
+    
+      <div class="topbar" style="background-color: #007bff; padding: 10px 0;">
+        <div class="container d-flex justify-content-between align-items-center">
+          <a href="/danh-sach-cua-hang" style="color: white;">
+            <img src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/gray-diamond.png?1738661756035" alt="tích điểm" width="19" height="16" style="margin-right: 10px;"> Tuyển dụng
+          </a>
+          <a href="tel:" class="phone" style="color: white; margin-right: 20px;">
+            <img src="{% static 'app/assets/img/icons/phone-white.svg' %}" alt="phone" style="width:18px; margin-top:-6px; margin-right: 5px;">
+            <b>0986777514-1900636605 </b> Mua hàng &amp; CSKH
+          </a>
+          <span class="chose-region" style="color: white;">Khu vực: <b class="city">Hồ Chí Minh</b>
+            <svg fill="currentColor" viewBox="0 0 448 512" width="12" height="12">
+              <path d="M441.9 167.3l-19.8-19.8c-4.7-4.7-12.3-4.7-17 0L224 328.2 42.9 147.5c-4.7-4.7-12.3-4.7-17 0L6.1 167.3c-4.7 4.7-4.7 12.3 0 17l209.4 209.4c4.7 4.7 12.3 4.7 17 0l209.4-209.4c4.7-4.7 4.7-12.3 0-17z"></path>
+            </svg>
+          </span>
+        </div>
+      </div>
+      <class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+      id="layout-navbar">
+      <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
+        <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
+          <i class="bx bx-menu bx-md"></i>
+        </a>
+      </div>
+
+      <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+        <!-- Search -->
+        <div class="navbar-nav align-items-center">
+          <div class="nav-item d-flex align-items-center">
+            <i class="bx bx-search bx-md"></i>
+            <input
+              type="text"
+              class="form-control border-0 shadow-none ps-1 ps-sm-2"
+              placeholder="Search..."
+              aria-label="Search..." />
+          </div>
+        </div>
+        <!-- /Search -->
+
+        <ul class="navbar-nav flex-row align-items-center ms-auto">
+          <!-- Place this tag where you want the button to render. -->
+          <li class="nav-item lh-1 me-4">
+            <a
+              class="github-button"
+              href="https://github.com/themeselection/sneat-html-admin-template-free"
+              data-icon="octicon-star"
+              data-size="large"
+              data-show-count="true"
+              aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
+              >Star</a
+            >
+          </li>
+
+          <!-- User -->
+          <li class="nav-item navbar-dropdown dropdown-user dropdown">
+            <a
+              class="nav-link dropdown-toggle hide-arrow p-0"
+              href="javascript:void(0);"
+              data-bs-toggle="dropdown">
+              <div class="avatar avatar-online">
+                <img src="{% static 'app/assets/img/avatars/1.png' %}" alt class="w-px-40 h-auto rounded-circle" />
+              </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <a class="dropdown-item" href="#">
+                  <div class="d-flex">
+                    <div class="flex-shrink-0 me-3">
+                      <div class="avatar avatar-online">
+                        <img src="{% static 'app/assets/img/avatars/1.png' %}" alt class="w-px-40 h-auto rounded-circle" />
+                      </div>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-0">John Doe</h6>
+                      <small class="text-muted">Admin</small>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <div class="dropdown-divider my-1"></div>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bx bx-user bx-md me-3"></i><span>My Profile</span>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#"> <i class="bx bx-cog bx-md me-3"></i><span>Settings</span> </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <span class="d-flex align-items-center align-middle">
+                    <i class="flex-shrink-0 bx bx-credit-card bx-md me-3"></i
+                    ><span class="flex-grow-1 align-middle">Billing Plan</span>
+                    <span class="flex-shrink-0 badge rounded-pill bg-danger">4</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <div class="dropdown-divider my-1"></div>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">
+                  <i class="bx bx-power-off bx-md me-3"></i><span>Log Out</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <!--/ User -->
+        </ul>
+      </div>
+    </nav>
+
+    <!-- / Navbar -->

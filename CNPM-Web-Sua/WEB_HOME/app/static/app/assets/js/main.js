@@ -7,6 +7,11 @@
 let menu, animate;
 
 (function () {
+  // Ensure that 'menu' is not declared multiple times
+  if (typeof menu === 'undefined') {
+    var menu = {}; // or let menu = {}; depending on your use case
+  }
+
   // Initialize menu
   //-----------------
 

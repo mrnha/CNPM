@@ -1,35 +1,116 @@
   <!-- Footer --> 
-  <footer class="content-footer footer bg-footer-theme">
-    <div class="container-xxl">
-      <div
-        class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-        <div class="text-body">
-          ©
-          <script>
-            document.write(new Date().getFullYear());
-          </script>
-          , made with ❤️ by
-          <a href="https://themeselection.com" target="_blank" class="footer-link">ThemeSelection</a>
-        </div>
-        <div class="d-none d-lg-inline-block">
-          <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-          <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
+   {% load static %}
 
-          <a
-            href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/documentation/"
-            target="_blank"
-            class="footer-link me-4"
-            >Documentation</a
-          >
-
-          <a
-            href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-            target="_blank"
-            class="footer-link"
-            >Support</a
-          >
+  <footer class="footer mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5 class="text-uppercase mb-4">Về Chúng Tôi</h5>
+                <p>ChickenMilk - Cửa hàng chuyên cung cấp sữa và đồ dùng cho mẹ và bé với chất lượng tốt nhất.</p>
+                <img src="{% static 'app/images/logo.png' %}" alt="Logo" style="width: 100px;">
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <h5 class="text-uppercase mb-4">Thông Tin Liên Hệ</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-home me-3"></i>
+                        123 Đường Thanh Lý, Quận 12, TP.HCM
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-envelope me-3"></i>
+                        chickenmilk@gmail.com
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-phone me-3"></i>
+                        +84 123 456 789
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-print me-3"></i>
+                        +84 987 654 321
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <h5 class="text-uppercase mb-4">Giờ Làm Việc</h5>
+                <table class="table text-center text-white">
+                  <tbody class="table text-center text-white"> 
+                    <tr>
+                      <td class="text-white">Thứ 2 - Thứ 6:</td>
+                      <td class="text-white">8:00 - 22:00</td>
+                    </tr>
+                    <tr>
+                      <td class="text-white">Thứ 7 và Chủ nhật:</td>
+                      <td class="text-white">8:00 - 20:00</td>
+                    </tr>
+                  </tbody>
+                </table>  <div class="mt-4">
+                    <a href="#" class="btn btn-floating text-white mx-1">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="btn btn-floating text-white mx-1">
+                        <i class="fab fa-google"></i>
+                    </a>
+                    <a href="#" class="btn btn-floating text-white mx-1">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
+    
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        © 2025 Copyright:
+        <a class="text-white" href="{% url 'home' %}">ChickenMilk.com.vn</a>
+    </div>
+  <style>
+    .footer {
+      background-color: #3f51b5;
+      color: white;
+      padding-top: 40px;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    .footer h5 {
+      border-bottom: 2px solid white;
+      padding-bottom: 10px;
+      display: inline-block;
+      color: #ffeb3b;
+    }
+    
+    .footer ul li {
+      color: white;
+    }
+    
+    .btn-floating {
+      background-color: #4b5fb9;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    
+    .btn-floating:hover {
+      background-color: #5c6ec9;
+    }
+    
+    .footer table {
+      color: white;
+    }
+    
+    @media (max-width: 768px) {
+      .footer {
+          text-align: center;
+      }
+      
+      .footer h5 {
+          margin-top: 20px;
+      }
+    }
+  </style>
   </footer>
   <!-- / Footer -->

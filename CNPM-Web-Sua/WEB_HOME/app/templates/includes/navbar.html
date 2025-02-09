@@ -1,23 +1,56 @@
-      {% load static %}
-      <!-- Navbar -->
+{% load static %}
+
+ <!-- Navbar -->   
+
+
+<script src="{%static 'app/js/cart.js'%}"> </script> 
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+     <a class="navbar-brand" href="{% url 'home' %}">
+    <img src="{% static 'app/images/logo.png' %}" width="70" height="70"> <!--logo-->
+    <a/>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Trang Chủ</a>
+        </li>
+      
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Sản Phẩm
+          </a>
+          <ul class="dropdown-menu">
+            {% for category in categories %}
+            <li><a class="dropdown-item" href="{% url 'category'%}?category={{category.slug}}">{{ category.name }}</a></li>
+            {% endfor %}
+          </ul>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'cart'%}">Cart</a>
+          </li>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Liên Hệ</a>
+        </li>
+      </ul>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'cart'%}">Cart</a>
+      </li>
+    </div>
     
-      <div class="topbar" style="background-color: #007bff; padding: 10px 0;">
-        <div class="container d-flex justify-content-between align-items-center">
-          <a href="/danh-sach-cua-hang" style="color: white;">
-            <img src="//bizweb.dktcdn.net/100/416/540/themes/839121/assets/gray-diamond.png?1738661756035" alt="tích điểm" width="19" height="16" style="margin-right: 10px;"> Tuyển dụng
-          </a>
-          <a href="tel:" class="phone" style="color: white; margin-right: 20px;">
-            <img src="{% static 'app/assets/img/icons/phone-white.svg' %}" alt="phone" style="width:18px; margin-top:-6px; margin-right: 5px;">
-            <b>0986777514-1900636605 </b> Mua hàng &amp; CSKH
-          </a>
-          <span class="chose-region" style="color: white;">Khu vực: <b class="city">Hồ Chí Minh</b>
-            <svg fill="currentColor" viewBox="0 0 448 512" width="12" height="12">
-              <path d="M441.9 167.3l-19.8-19.8c-4.7-4.7-12.3-4.7-17 0L224 328.2 42.9 147.5c-4.7-4.7-12.3-4.7-17 0L6.1 167.3c-4.7 4.7-4.7 12.3 0 17l209.4 209.4c4.7 4.7 12.3 4.7 17 0l209.4-209.4c4.7-4.7 4.7-12.3 0-17z"></path>
-            </svg>
-          </span>
-        </div>
-      </div>
-      <class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+  </div>
+
+       <div class="form-inline my-2 my-1g-0 position-relative"> 
+         <a href="{% url 'cart' %}"><img id="cart-icon" src="{% static 'app/images/cart.jpeg'%}" style="width: 30px; height: 30px;"></a>
+         <p id="cart-total" style="position: absolute; top: -10px; right: -10px; margin: 0;">{{cartItems}}</p>
+</nav>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+</nav>
+<nav
+      class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
       id="layout-navbar">
       <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
         <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
@@ -27,29 +60,19 @@
 
       <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
         <!-- Search -->
-        <div class="navbar-nav align-items-center">
-          <div class="nav-item d-flex align-items-center">
-            <i class="bx bx-search bx-md"></i>
-            <input
-              type="text"
-              class="form-control border-0 shadow-none ps-1 ps-sm-2"
-              placeholder="Search..."
-              aria-label="Search..." />
-          </div>
-        </div>
+        <form class="d-flex" role="search" method= POST action="{% url 'search' %}">
+          {% csrf_token %}
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searched">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+        
         <!-- /Search -->
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
           <!-- Place this tag where you want the button to render. -->
           <li class="nav-item lh-1 me-4">
             <a
-              class="github-button"
-              href="https://github.com/themeselection/sneat-html-admin-template-free"
-              data-icon="octicon-star"
-              data-size="large"
-              data-show-count="true"
-              aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
-              >Star</a
+              >Xin Chào !</a
             >
           </li>
 
@@ -73,8 +96,8 @@
                       </div>
                     </div>
                     <div class="flex-grow-1">
-                      <h6 class="mb-0">John Doe</h6>
-                      <small class="text-muted">Admin</small>
+                      <h6 class="mb-0">{{request.user}}</h6>
+                      <small class="text-muted">Người dùng</small>
                     </div>
                   </div>
                 </a>
@@ -88,30 +111,33 @@
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="#"> <i class="bx bx-cog bx-md me-3"></i><span>Settings</span> </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-                  <span class="d-flex align-items-center align-middle">
-                    <i class="flex-shrink-0 bx bx-credit-card bx-md me-3"></i
-                    ><span class="flex-grow-1 align-middle">Billing Plan</span>
-                    <span class="flex-shrink-0 badge rounded-pill bg-danger">4</span>
-                  </span>
-                </a>
-              </li>
-              <li>
                 <div class="dropdown-divider my-1"></div>
               </li>
+              
               <li>
-                <a class="dropdown-item" href="javascript:void(0);">
-                  <i class="bx bx-power-off bx-md me-3"></i><span>Log Out</span>
-                </a>
+                {% if user.is_authenticated %}
+    <div class="dropdown-item">
+      <span class=" bx bx-power-off bx-md me-3"> </span> 
+      <span><a href="{% url 'logout' %}">Thoát</a></span>
+    </div>
+    {% else %}
+    <div class="form inline my-2 my-lg-0">
+      <span><a href="{% url 'login' %}">&nbspĐăng nhập</a></span>
+      <span><a href="{% url 'register' %}">Đăng ký</a></span>
+    </div>
+    {% endif %}
               </li>
+              
             </ul>
           </li>
           <!--/ User -->
         </ul>
       </div>
+      <div class="form-inline my-2 my-1g-0 position-relative"> 
+        <a href="{% url 'cart' %}"><img id="cart-icon" src="{% static 'app/images/cart.jpeg'%}" style="width: 30px; height: 30px;"></a>
+        <p id="cart-total" style="position: absolute; top: -10px; right: -10px; margin: 0;">{{cartItems}}</p>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'cart'%}">Cart</a>
+      </li>
+    </div>
     </nav>
-
-    <!-- / Navbar -->

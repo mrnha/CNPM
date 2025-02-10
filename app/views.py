@@ -7,6 +7,8 @@ from django.contrib import messages
 
 from .models import *
 import json
+def index (request):
+    return render(request, 'app/index.html')
 # Create your views here.
 def detail (request):
     if request.user.is_authenticated:
@@ -45,12 +47,14 @@ def category(request):
         products= Product.objects.filter(category__slug=active_category)
         customer = request.user
         order, created = Order.objects.get_or_create(Customer=customer, complete=False)
+
         items = order.orderitem_set.all()
         cartItems = order.get_cart_items
     else:
         items = []
         order = {'get_cart_items': 0, 'get_cart_total': 0}
         cartItems = order['get_cart_items']
+    
     context = {'products':products,'categories':categories,'active_category':active_category, 'order': order, 'items': items, 'cartItems': cartItems}
     return render(request, 'app/category.html', context)
 
@@ -69,7 +73,8 @@ def search(request):
         items = []
         order = {'get_cart_total': 0, 'get_cart_items': 0}
         cartItems = order['get_cart_items']
-    return render(request, 'app/search.html',{"searched":searched,"keys":keys,"items":items,"cartItems":cartItems,"order":order})
+    categories = Category.objects.filter(is_sub=True)
+    return render(request, 'app/search.html',{"searched":searched,"keys":keys,"items":items,"cartItems":cartItems,"order":order,"categories":categories})
 
 
 def register(request):

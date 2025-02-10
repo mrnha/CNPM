@@ -4,6 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from decimal import Decimal
 
 from .models import *
 import json
@@ -155,32 +156,52 @@ def new_func(order):
     cartItems = order['get_cart_items']
     return cartItems
 def checkout(request):
-    context={}
     if request.user.is_authenticated:
         customer = request.user
-        order, created = Order.objects.get_or_create(Customer=customer, complete=False)
+        order = Order.objects.get(Customer=customer, complete=False)
         items = order.orderitem_set.all()
 
-        cartItems = order.get_cart_items
+        if request.method == 'POST':
+            try:
+                # Tạo checkout order mới
+                checkout_order = CheckoutOrder(
+                    customer=customer,
+                    order=order,
+                    full_name=request.POST.get('full_name'),
+                    email=request.POST.get('email'),
+                    phone=request.POST.get('phone'),
+                    address=request.POST.get('address'),
+                    city=request.POST.get('city'),
+                    district=request.POST.get('district'),
+                    ward=request.POST.get('ward'),
+                    payment_method=request.POST.get('payment_method'),
+                    notes=request.POST.get('notes'),
+                    total_amount=Decimal(str(order.get_cart_total)),
+                    order_status='PENDING'
+                )
+                checkout_order.save()
 
-        user_login = "show"
-        User_not_login = "hidden"
+                # Cập nhật trạng thái đơn hàng
+                order.complete = True
+                order.save()
 
-        
+                # Tạo đơn hàng mới cho khách hàng
+                Order.objects.create(Customer=customer, complete=False)
+
+                messages.success(request, 'Đặt hàng thành công! Cảm ơn bạn đã mua hàng.')
+                return redirect('home')
+
+            except Exception as e:
+                messages.error(request, f'Có lỗi xảy ra: {str(e)}')
+                return redirect('checkout')
+
+        context = {
+            'items': items,
+            'order': order,
+        }
+        return render(request, 'app/checkout.html', context)
     else:
-        items = []
-        order = {'order.get_cart_items':0,'order.get_cart_total':0}
-
-        cartItems = order['get_cart_items']
-        
-        user_login = "hidden"
-        User_not_login = "show"
-    categories = Category.objects.filter(is_sub=False)
-        
-        
-    context = {'items': items, 'order': order,'user_login':user_login,'User_not_login':User_not_login,'cartItems':cartItems,'categories':categories}
-
-    return render(request, 'app/checkout.html', context)
+        return redirect('login')
 def updateItem(request):
     data = json.loads(request.body)
     productId = data['productId']

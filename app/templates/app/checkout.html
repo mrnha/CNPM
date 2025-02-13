@@ -77,9 +77,9 @@
 
         <div class="col-lg-4">
             <div class="box-element">
-                <a class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
+                <a class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Trở lại giỏ hàng</a>
                 <hr>
-                <h3>Order Summary</h3>
+                <h3>Tóm tắt đơn hàng</h3>
                 <div class="row bg-light py-2 mb-2 d-none d-md-flex">
                     <div style="flex:1; text-align:center;"><strong>Sản phẩm</strong></div>
                     <div style="flex:1; text-align:center;"><strong>Tên sản phẩm</strong></div>
@@ -95,8 +95,8 @@
                     <div style="flex:1; text-align:center;"><p>{{item.quantity}}</p></div>
                 </div>
                 {%endfor%}
-                <h5>Items:   {{order.get_cart_items}}</h5>
-                <h5>Total:   {{order.get_cart_total}} VNĐ</h5>
+                <h5>Số món:   {{order.get_cart_items}}</h5>
+                <h5>Số tiền:   {{order.get_cart_total}} VNĐ</h5>
             </div>
         </div>
     </div>

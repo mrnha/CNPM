@@ -25,7 +25,7 @@
                       <div class="row justify-content-center">
                         <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
           
-                          <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
+                          <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Đăng kí</p>
           
                           <form class="mx-1 mx-md-4" method = "POST" action ="" >
                             {% csrf_token %}
@@ -43,7 +43,7 @@
                               <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                               <div data-mdb-input-init class="form-outline flex-fill mb-0">
                                 
-                                <label class="form-label" for="form3Example3c">Your Email</label> {{form.email}}
+                                <label class="form-label" for="form3Example3c">Email của bạn</label> {{form.email}}
                               </div>
                             </div>
 
@@ -51,7 +51,7 @@
                                 <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                                 <div data-mdb-input-init class="form-outline flex-fill mb-0">
                                   
-                                  <label class="form-label" for="form3Example3c"> Firt Name</label> {{form.first_name}}  
+                                  <label class="form-label" for="form3Example3c">Họ của bạn</label> {{form.first_name}}  
                                 </div>
                               </div>
 
@@ -59,7 +59,7 @@
                                 <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                                 <div data-mdb-input-init class="form-outline flex-fill mb-0">
                                   
-                                  <label class="form-label" for="form3Example3c"> Last Name</label>{{form.last_name}}
+                                  <label class="form-label" for="form3Example3c">Tên của bạn</label>{{form.last_name}}
                                 </div>
                               </div>
           
@@ -67,7 +67,7 @@
                               <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                               <div data-mdb-input-init class="form-outline flex-fill mb-0">
                                 
-                                <label class="form-label" for="form3Example4c">Password</label>{{form.password1}}
+                                <label class="form-label" for="form3Example4c">Tạo mật khẩu</label>{{form.password1}}
                               </div>
                             </div>
           
@@ -75,14 +75,14 @@
                               <i class="fas fa-key fa-lg me-3 fa-fw"></i>
                               <div data-mdb-input-init class="form-outline flex-fill mb-0">
                                
-                                <label class="form-label" for="form3Example4cd">Repeat your password</label> {{form.password2}}
+                                <label class="form-label" for="form3Example4cd">Xác nhận mật khẩu</label> {{form.password2}}
                               </div>
                             </div>
           
                             <div class="form-check d-flex justify-content-center mb-5">
                               <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
                               <label class="form-check-label" for="form2Example3">
-                                I agree all statements in <a href="#!">Terms of service</a>
+                                Tôi đồng ý với <a href="#!">các điều khoản về dịch vụ</a>
                               </label>
                             </div>
           

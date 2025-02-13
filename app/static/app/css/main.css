@@ -99,3 +99,58 @@ h1,h2,h3,h4,h5,h6{
 .hidden{
 	display: none!important;
 }
+
+/* Navbar styles */
+.navbar {
+    margin-bottom: 20px;
+}
+
+.navbar-nav .dropdown-menu {
+    margin-top: 8px;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 8px;
+}
+
+/* Messages styles */
+.messages-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.alert {
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Account dropdown styles */
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #dc3545;
+    color: white !important;
+}
+
+/* Cart badge */
+.badge {
+    position: relative;
+    top: -8px;
+    margin-left: -8px;
+}

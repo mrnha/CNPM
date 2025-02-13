@@ -99,4 +99,21 @@ class ShippingAddress(models.Model):
         verbose_name_plural = "Địa chỉ giao hàng"
     
 
+class CustomerProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    phone = models.CharField(max_length=15, null=True, blank=True, verbose_name="Số điện thoại")
+    address = models.CharField(max_length=200, null=True, blank=True, verbose_name="Địa chỉ")
+    city = models.CharField(max_length=100, null=True, blank=True, verbose_name="Thành phố")
+    district = models.CharField(max_length=100, null=True, blank=True, verbose_name="Quận/Huyện")
+    ward = models.CharField(max_length=100, null=True, blank=True, verbose_name="Phường/Xã")
+
+    def __str__(self):
+        return f"Hồ sơ của {self.user.username}"
+
+    class Meta:
+        verbose_name = "Hồ sơ khách hàng"
+        verbose_name_plural = "Hồ sơ khách hàng"
+    
+
 

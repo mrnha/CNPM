@@ -2,9 +2,22 @@ from urllib import request
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
 from decimal import Decimal
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.core.paginator import Paginator
+from django.views.decorators.http import require_POST
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
+from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_protect
+from .models import *
+
 
 from .models import *
 import json
@@ -220,3 +233,173 @@ def updateItem(request):
             orderItem.delete()
     
     return JsonResponse('Item was updated', safe=False)
+
+
+@login_required
+def account_dashboard(request):
+    user = request.user
+    profile, created = CustomerProfile.objects.get_or_create(user=user)
+    
+    # Lấy thông tin giỏ hàng hiện tại
+    current_order, created = Order.objects.get_or_create(Customer=user, complete=False)
+    cartItems = current_order.get_cart_items
+    
+    # Lấy lịch sử đơn hàng
+    orders = Order.objects.filter(Customer=user, complete=True).order_by('-date_order')
+    recent_orders = orders[:5]  # 5 đơn hàng gần nhất
+    
+    # Thống kê đơn hàng
+    total_orders = orders.count()
+    total_spent = sum(order.get_cart_total for order in orders)
+    
+    context = {
+        'profile': profile,
+        'cartItems': cartItems,
+        'current_order': current_order,
+        'recent_orders': recent_orders,
+        'total_orders': total_orders,
+        'total_spent': total_spent,
+    }
+    return render(request, 'app/account/dashboard.html', context)
+
+@login_required
+def account_profile(request):
+    user = request.user
+    profile, created = CustomerProfile.objects.get_or_create(user=user)
+    current_order, created = Order.objects.get_or_create(Customer=user, complete=False)
+    cartItems = current_order.get_cart_items
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        if action == 'update_profile':
+            try:
+                # Kiểm tra email
+                new_email = request.POST.get('email')
+                if new_email != user.email and User.objects.filter(email=new_email).exists():
+                    messages.error(request, 'Email này đã được sử dụng.')
+                    return redirect('account_profile')
+                
+                # Cập nhật thông tin cơ bản
+                user.first_name = request.POST.get('first_name')
+                user.last_name = request.POST.get('last_name')
+                user.email = new_email
+                user.save()
+                
+                # Cập nhật thông tin chi tiết
+                profile.phone = request.POST.get('phone')
+                profile.address = request.POST.get('address')
+                profile.city = request.POST.get('city')
+                profile.district = request.POST.get('district')
+                profile.ward = request.POST.get('ward')
+                
+                # Xử lý avatar
+                if 'avatar' in request.FILES:
+                    if profile.avatar:
+                        profile.avatar.delete()
+                    profile.avatar = request.FILES['avatar']
+                
+                profile.save()
+                messages.success(request, 'Cập nhật thông tin thành công!')
+                return redirect('account_profile')
+            except Exception as e:
+                messages.error(request, f'Lỗi: {str(e)}')
+                return redirect('account_profile')
+
+    context = {
+        'profile': profile,
+        'cartItems': cartItems,
+    }
+    return render(request, 'app/account/profile.html', context)
+
+@login_required
+def account_orders(request):
+    user = request.user
+    orders = Order.objects.filter(Customer=user, complete=True).order_by('-date_order')
+    current_order, created = Order.objects.get_or_create(Customer=user, complete=False)
+    cartItems = current_order.get_cart_items
+    
+    # Phân trang
+    paginator = Paginator(orders, 10)
+    page = request.GET.get('page')
+    orders_page = paginator.get_page(page)
+    
+    context = {
+        'orders': orders_page,
+        'cartItems': cartItems,
+    }
+    return render(request, 'app/account/orders.html', context)
+
+@login_required
+def order_detail(request, order_id):
+    user = request.user
+    try:
+        order = Order.objects.get(id=order_id, Customer=user)
+        current_order, created = Order.objects.get_or_create(Customer=user, complete=False)
+        cartItems = current_order.get_cart_items
+        
+        shipping = ShippingAddress.objects.filter(order=order).first()
+        items = order.orderitem_set.all()
+        
+        context = {
+            'order': order,
+            'shipping': shipping,
+            'items': items,
+            'cartItems': cartItems,
+        }
+        return render(request, 'app/account/order_detail.html', context)
+    except Order.DoesNotExist:
+        messages.error(request, 'Không tìm thấy đơn hàng.')
+        return redirect('account_orders')
+
+@login_required
+def change_password(request):
+    user = request.user
+    current_order, created = Order.objects.get_or_create(Customer=user, complete=False)
+    cartItems = current_order.get_cart_items
+    
+    if request.method == 'POST':
+        form = PasswordChangeForm(user, request.POST)
+        if form.is_valid():
+            try:
+                user = form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Mật khẩu của bạn đã được thay đổi thành công!')
+                return redirect('account_dashboard')
+            except Exception as e:
+                messages.error(request, f'Đã xảy ra lỗi: {str(e)}')
+        else:
+            messages.error(request, 'Vui lòng kiểm tra lại thông tin nhập vào.')
+    else:
+        form = PasswordChangeForm(user)
+    
+    context = {
+        'form': form,
+        'cartItems': cartItems,
+    }
+    return render(request, 'app/account/change_password.html', context)
+
+@login_required
+@require_POST
+@csrf_protect
+def update_avatar(request):
+    try:
+        if request.FILES.get('avatar'):
+            profile = request.user.customerprofile
+            # Xóa avatar cũ nếu có
+            if profile.avatar:
+                profile.avatar.delete()
+            
+            profile.avatar = request.FILES['avatar']
+            profile.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Avatar đã được cập nhật thành công',
+                'avatar_url': profile.avatar.url
+            })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)

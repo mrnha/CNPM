@@ -14,4 +14,10 @@ urlpatterns = [
  path('update_item/', views.updateItem, name="update_item"),
  path('logout/', views.logoutPage, name="logout"),   
  path('category/', views.category, name="category"),
+ path('account/', views.account_dashboard, name='account_dashboard'),
+ path('account/orders/', views.account_orders, name='account_orders'),
+ path('account/profile/', views.account_profile, name='account_profile'),
+ path('account/orders/<int:order_id>/', views.order_detail, name='order_detail'),
+ path('account/change-password/', views.change_password, name='change_password'),
+ path('account/update-avatar/', views.update_avatar, name='update_avatar'),
 ]

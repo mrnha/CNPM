@@ -1,0 +1,143 @@
+{% load static %}
+
+ <!-- Navbar -->   
+
+
+<script src="{%static 'app/js/cart.js'%}"> </script> 
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+     <a class="navbar-brand" href="{% url 'home' %}">
+    <img src="{% static 'app/images/logo.png' %}" width="70" height="70"> <!--logo-->
+    <a/>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Trang Chủ</a>
+        </li>
+      
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Sản Phẩm
+          </a>
+          <ul class="dropdown-menu">
+            {% for category in categories %}
+            <li><a class="dropdown-item" href="{% url 'category'%}?category={{category.slug}}">{{ category.name }}</a></li>
+            {% endfor %}
+          </ul>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'cart'%}">Cart</a>
+          </li>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Liên Hệ</a>
+        </li>
+      </ul>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'cart'%}">Cart</a>
+      </li>
+    </div>
+    
+  </div>
+
+       <div class="form-inline my-2 my-1g-0 position-relative"> 
+         <a href="{% url 'cart' %}"><img id="cart-icon" src="{% static 'app/images/cart.jpeg'%}" style="width: 30px; height: 30px;"></a>
+         <p id="cart-total" style="position: absolute; top: -10px; right: -10px; margin: 0;">{{cartItems}}</p>
+</nav>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+</nav>
+<nav
+      class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+      id="layout-navbar">
+      <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
+        <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
+          <i class="bx bx-menu bx-md"></i>
+        </a>
+      </div>
+
+      <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+        <!-- Search -->
+        <form class="d-flex" role="search" method= POST action="{% url 'search' %}">
+          {% csrf_token %}
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searched">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+        
+        <!-- /Search -->
+
+        <ul class="navbar-nav flex-row align-items-center ms-auto">
+          <!-- Place this tag where you want the button to render. -->
+          <li class="nav-item lh-1 me-4">
+            <a
+              >Xin Chào !</a
+            >
+          </li>
+
+          <!-- User -->
+          <li class="nav-item navbar-dropdown dropdown-user dropdown">
+            <a
+              class="nav-link dropdown-toggle hide-arrow p-0"
+              href="javascript:void(0);"
+              data-bs-toggle="dropdown">
+              <div class="avatar avatar-online">
+                <img src="{% static 'app/assets/img/avatars/1.png' %}" alt class="w-px-40 h-auto rounded-circle" />
+              </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <a class="dropdown-item" href="#">
+                  <div class="d-flex">
+                    <div class="flex-shrink-0 me-3">
+                      <div class="avatar avatar-online">
+                        <img src="{% static 'app/assets/img/avatars/1.png' %}" alt class="w-px-40 h-auto rounded-circle" />
+                      </div>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-0">{{request.user}}</h6>
+                      <small class="text-muted">Người dùng</small>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <div class="dropdown-divider my-1"></div>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bx bx-user bx-md me-3"></i><span>My Profile</span>
+                </a>
+              </li>
+              <li>
+                <div class="dropdown-divider my-1"></div>
+              </li>
+              
+              <li>
+                {% if user.is_authenticated %}
+    <div class="dropdown-item">
+      <span class=" bx bx-power-off bx-md me-3"> </span> 
+      <span><a href="{% url 'logout' %}">Thoát</a></span>
+    </div>
+    {% else %}
+    <div class="form inline my-2 my-lg-0">
+      <span><a href="{% url 'login' %}">&nbspĐăng nhập</a></span>
+      <span><a href="{% url 'register' %}">Đăng ký</a></span>
+    </div>
+    {% endif %}
+              </li>
+              
+            </ul>
+          </li>
+          <!--/ User -->
+        </ul>
+      </div>
+      <div class="form-inline my-2 my-1g-0 position-relative"> 
+        <a href="{% url 'cart' %}"><img id="cart-icon" src="{% static 'app/images/cart.jpeg'%}" style="width: 30px; height: 30px;"></a>
+        <p id="cart-total" style="position: absolute; top: -10px; right: -10px; margin: 0;">{{cartItems}}</p>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'cart'%}">Cart</a>
+      </li>
+    </div>
+    </nav>

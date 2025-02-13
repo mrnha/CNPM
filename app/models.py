@@ -70,89 +70,33 @@ class OrderItem(models.Model):
 class ShippingAddress(models.Model):
     Customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
-    address = models.CharField(max_length=200, null=True)
-    city = models.CharField(max_length=200, null=True)
-    state = models.CharField(max_length=200, null=True)
-    mobile = models.CharField(max_length=200, null=True)
-    date_added = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.address
-    
-
-class CheckoutOrder(models.Model):
-    STATUS_CHOICES = [
-        ('PENDING', 'Chờ xử lý'),
-        ('PROCESSING', 'Đang xử lý'),
-        ('SHIPPING', 'Đang giao hàng'),
-        ('COMPLETED', 'Đã hoàn thành'),
-        ('CANCELLED', 'Đã hủy'),
-    ]
-
-    PAYMENT_CHOICES = [
-        ('COD', 'Thanh toán khi nhận hàng'),
-        ('BANK', 'Chuyển khoản ngân hàng'),
-        ('PAYPAL', 'PayPal'),
-    ]
-
-    # Liên kết với User và Order
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    order = models.OneToOneField(Order, on_delete=models.CASCADE)
-    
-    # Thông tin cá nhân
-    full_name = models.CharField(max_length=200, verbose_name="Họ và tên")
-    email = models.EmailField(verbose_name="Email")
-    phone = models.CharField(max_length=15, verbose_name="Số điện thoại")
-    
-    # Thông tin giao hàng
-    address = models.CharField(max_length=255, verbose_name="Địa chỉ")
-    city = models.CharField(max_length=100, verbose_name="Thành phố")
-    district = models.CharField(max_length=100, verbose_name="Quận/Huyện")
-    ward = models.CharField(max_length=100, verbose_name="Phường/Xã")
-    
-    # Thông tin thanh toán
+    full_name = models.CharField(max_length=200, null=True, verbose_name="Họ và tên")
+    email = models.EmailField(max_length=200, null=True, verbose_name="Email")
+    address = models.CharField(max_length=200, null=True, verbose_name="Địa chỉ")
+    city = models.CharField(max_length=200, null=True, verbose_name="Thành phố")
+    district = models.CharField(max_length=200, null=True, verbose_name="Quận/Huyện")
+    ward = models.CharField(max_length=200, null=True, verbose_name="Phường/Xã")
+    mobile = models.CharField(max_length=15, null=True, verbose_name="Số điện thoại")
     payment_method = models.CharField(
         max_length=20,
-        choices=PAYMENT_CHOICES,
+        choices=[
+            ('COD', 'Thanh toán khi nhận hàng'),
+            ('BANK', 'Chuyển khoản ngân hàng'),
+            ('MOMO', 'Ví MoMo'),
+            ('VNPAY', 'VNPay'),
+        ],
         default='COD',
         verbose_name="Phương thức thanh toán"
     )
-    
-    # Trạng thái đơn hàng
-    order_status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='PENDING',
-        verbose_name="Trạng thái đơn hàng"
-    )
-    
-    # Thông tin bổ sung
-    notes = models.TextField(blank=True, null=True, verbose_name="Ghi chú")
-    total_amount = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2,
-        verbose_name="Tổng tiền"
-    )
-    
-    # Thời gian
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tạo")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Cập nhật lần cuối")
-
-    class Meta:
-        ordering = ['-created_at']
-        verbose_name = "Đơn hàng Checkout"
-        verbose_name_plural = "Đơn hàng Checkout"
+    notes = models.TextField(null=True, blank=True, verbose_name="Ghi chú")
+    date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Đơn hàng #{self.id} - {self.customer.username}"
+        return f"Đơn hàng của {self.full_name}"
 
-    def get_full_address(self):
-        return f"{self.address}, {self.ward}, {self.district}, {self.city}"
-
-    def get_status_display_name(self):
-        return dict(self.STATUS_CHOICES)[self.order_status]
-
-    def get_payment_method_display_name(self):
-        return dict(self.PAYMENT_CHOICES)[self.payment_method]
-
+    class Meta:
+        verbose_name = "Địa chỉ giao hàng"
+        verbose_name_plural = "Địa chỉ giao hàng"
     
+
+

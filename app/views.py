@@ -163,26 +163,24 @@ def checkout(request):
 
         if request.method == 'POST':
             try:
-                # Tạo checkout order mới
-                checkout_order = CheckoutOrder(
-                    customer=customer,
+                # Tạo shipping address mới
+                shipping = ShippingAddress.objects.create(
+                    Customer=customer,
                     order=order,
                     full_name=request.POST.get('full_name'),
                     email=request.POST.get('email'),
-                    phone=request.POST.get('phone'),
+                    mobile=request.POST.get('mobile'),
                     address=request.POST.get('address'),
                     city=request.POST.get('city'),
                     district=request.POST.get('district'),
                     ward=request.POST.get('ward'),
                     payment_method=request.POST.get('payment_method'),
-                    notes=request.POST.get('notes'),
-                    total_amount=Decimal(str(order.get_cart_total)),
-                    order_status='PENDING'
+                    notes=request.POST.get('notes')
                 )
-                checkout_order.save()
 
                 # Cập nhật trạng thái đơn hàng
                 order.complete = True
+                order.transaction_id = f"ORD-{order.id}"
                 order.save()
 
                 # Tạo đơn hàng mới cho khách hàng
@@ -201,6 +199,7 @@ def checkout(request):
         }
         return render(request, 'app/checkout.html', context)
     else:
+        messages.warning(request, 'Vui lòng đăng nhập để tiếp tục.')
         return redirect('login')
 def updateItem(request):
     data = json.loads(request.body)

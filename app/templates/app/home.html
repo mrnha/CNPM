@@ -1,7 +1,9 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-
+{% block navbar %}
+       {% include 'app/navbar.html' %}
+{% endblock navbar %}
 
 {% block banner_slider%} 
 <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel" data-bs-interval="3000">

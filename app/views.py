@@ -202,6 +202,9 @@ def checkout(request):
                 # Tạo đơn hàng mới cho khách hàng
                 Order.objects.create(Customer=customer, complete=False)
 
+                messages.success(request, 'Đặt hàng thành công! Cảm ơn bạn đã mua hàng.')
+                return redirect('home')
+
                 # Chuyển hướng đến trang xác nhận đơn hàng
                 return redirect('order_confirmation', order_id=order.id)
 

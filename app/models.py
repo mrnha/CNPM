@@ -38,7 +38,7 @@ class Product(models.Model):
         return url
 
 class Order(models.Model):
-    Customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False)
+    Customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     date_order = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, null=True, blank=False)
     transaction_id = models.CharField(max_length=200, null = True)

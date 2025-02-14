@@ -403,3 +403,23 @@ def update_avatar(request):
             'success': False,
             'message': str(e)
         }, status=400)
+def get_context_data(request):
+    context = {}
+    if request.user.is_authenticated:
+        try:
+            customer = request.user.customerprofile
+            pending_orders = Order.objects.filter(Customer=customer, complete=False).count()
+            context['pending_orders_count'] = pending_orders
+            
+            # Thêm cartItems vào context
+            order, created = Order.objects.get_or_create(Customer=customer, complete=False)
+            items = order.orderitem_set.all()
+            cartItems = sum([item.quantity for item in items])
+            context['cartItems'] = cartItems
+            
+        except Exception as e:
+            print(f"Error in get_context_data: {e}")
+            context['pending_orders_count'] = 0
+            context['cartItems'] = 0
+            
+    return context

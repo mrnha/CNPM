@@ -26,22 +26,31 @@
                     <a href="{% url 'account_orders' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-shopping-bag"></i> Đơn hàng
                     </a>
+                    <a href="{% url 'change_password' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-key"></i> Đổi mật khẩu
+                    </a>
                 </div>
             </div>
         </div>
 
         <!-- Main Content -->
         <div class="col-md-9">
-            <!-- Thông tin cá nhân -->
-            <div class="card mb-4">
+            <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">Thông tin cá nhân</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="hidden" name="action" value="update_profile">
                         
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Họ</label>
@@ -83,42 +92,9 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Ảnh đại diện</label>
-                            <input type="file" name="avatar" class="form-control">
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Cập nhật thông tin</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Đổi mật khẩu -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Đổi mật khẩu</h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="change_password">
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Mật khẩu hiện tại</label>
-                            <input type="password" name="old_password" class="form-control">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Mật khẩu mới</label>
-                            <input type="password" name="new_password1" class="form-control">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Xác nhận mật khẩu mới</label>
-                            <input type="password" name="new_password2" class="form-control">
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Cập nhật thông tin
+                        </button>
                     </form>
                 </div>
             </div>

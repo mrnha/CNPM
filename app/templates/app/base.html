@@ -94,25 +94,91 @@
                   <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searched">
                   <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
-              </div>
-              {% if user.is_authenticated %}
-              <div class="form inline my-2 my-lg-0">
-                <span>&nbspChào!! {{ request.user }} </span> 
-                <span><a href="{% url 'logout' %}">Thoát</a></span>
-              </div>
-              {% else %}
-              <div class="form inline my-2 my-lg-0">
-                <span><a href="{% url 'login' %}">&nbspĐăng nhập</a></span>
-                <span><a href="{% url 'register' %}">Đăng ký</a></span>
-              </div>
-              {% endif %}
-            </div>
-
-                 <div class="form-inline my-2 my-1g-0 position-relative"> 
-                   <a href="{% url 'cart' %}"><img id="cart-icon" src="{% static 'app/images/cart.jpeg'%}" style="width: 30px; height: 30px;"></a>
-                   <p id="cart-total" style="position: absolute; top: -10px; right: -10px; margin: 0;">{{cartItems}}</p>
+                <div class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
+                                <div class="avatar avatar-online">
+                                    {% if user.customerprofile.avatar %}
+                                        <img src="{{ user.customerprofile.avatar.url }}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                    {% else %}
+                                        <img src="{% static 'images/default-avatar.png' %}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                    {% endif %}
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'account_dashboard' %}">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0 me-3">
+                                                <div class="avatar avatar-online">
+                                                    {% if user.customerprofile.avatar %}
+                                                        <img src="{{ user.customerprofile.avatar.url }}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                                    {% else %}
+                                                        <img src="{% static 'images/default-avatar.png' %}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">{{ user.get_full_name|default:user.username }}</h6>
+                                                <small class="text-muted">{% if user.is_staff %}Admin{% else %}Khách hàng{% endif %}</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'account_profile' %}">
+                                        <i class="fas fa-user fa-fw me-3"></i>
+                                        <span>Thông tin cá nhân</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'account_orders' %}">
+                                        <i class="fas fa-shopping-bag fa-fw me-3"></i>
+                                        <span>Đơn hàng</span>
+                                        {% if pending_orders_count > 0 %}
+                                            <span class="badge rounded-pill bg-danger ms-auto">{{ pending_orders_count }}</span>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'change_password' %}">
+                                        <i class="fas fa-key fa-fw me-3"></i>
+                                        <span>Đổi mật khẩu</span>
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                        <i class="fas fa-sign-out-alt fa-fw me-3"></i>
+                                        <span>Đăng xuất</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'cart' %}">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="badge rounded-pill bg-danger">{{ cartItems }}</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">
+                                <i class="fas fa-user-plus"></i> Đăng ký
+                            </a>
+                        </li>
+                    {% endif %}
                 </div>
-          </nav>
+              </div>
+            </div>
+        </nav>
         
           <!-- Thêm ngay sau phần navbar -->
           {% if messages %}
@@ -130,7 +196,7 @@
               </div>
           {% endif %}
 
-          <style>
+        <style>
           .alert {
               margin-bottom: 1rem;
               border-radius: 8px;
@@ -162,7 +228,56 @@
                   transform: translateY(0);
               }
           }
-          </style>
+
+          .avatar-online::after {
+              content: '';
+              position: absolute;
+              bottom: 0;
+              right: 0;
+              width: 10px;
+              height: 10px;
+              border-radius: 50%;
+              border: 2px solid #fff;
+              background-color: #28a745;
+          }
+
+          .dropdown-menu {
+              min-width: 280px;
+              padding: 0.5rem 0;
+              margin: 0;
+              box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
+          }
+
+          .dropdown-item {
+              padding: 0.75rem 1.25rem;
+              display: flex;
+              align-items: center;
+          }
+
+          .dropdown-item:hover {
+              background-color: #f8f9fa;
+          }
+
+          .dropdown-item.text-danger:hover {
+              background-color: #dc3545;
+              color: white !important;
+          }
+
+          .dropdown-divider {
+              margin: 0.5rem 0;
+          }
+
+          .nav-link .badge {
+              position: relative;
+              top: -8px;
+              margin-left: -8px;
+          }
+
+          .avatar {
+              position: relative;
+              display: inline-block;
+          }
+        </style>
         
           <!--main body-->
           {% block banner_slider%} {% endblock banner_slider %}

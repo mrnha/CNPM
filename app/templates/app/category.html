@@ -18,20 +18,112 @@
         {% block register%}
         <h5>Kết quả tìm kiếm cho "{{searched}}"</h5>  
         <div class="row" style="width:100%">
-            {%for product in products %}
-            <div class="col-lg-4">
-                <img class = "thumbnail" src="{{product.ImageURL}}" class = "img-responsive" width="100%" height="300"> 
-                <div class="box-element product">
-                    <h6><strong> {{ product.name}} </strong> </h6>
-                    <hr>
-                    <button data-product={{product.id}} data-action="add" class="btn btn-outline-secondary add-btn update-cart" >Thêm vào giỏ hàng</button>
-                    <a class="btn btn-outline-success" href="#">Xem</a>
-                    <h3 style="display:inline-block; float:right"><strong>{{product.price |floatformat:3 }} VNĐ</strong></h3>
-    
-                </div> 
-            </div>  
-            {%endfor%}      
+            {% for product in products %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 product-card">
+                <!-- Product Image -->
+                <img src="{{product.ImageURL}}" class="card-img-top product-image" alt="{{product.name}}" 
+                     style="height: 300px; object-fit: cover;">
+                
+                <!-- Product Details -->
+                <div class="card-body">
+                    <h5 class="card-title product-name">{{ product.name }}</h5>
+                    <div class="price-tag">
+                        <span class="price">{{product.price|floatformat:3}} VNĐ</span>
+                    </div>
+                    
+                    <!-- Buttons -->
+                    <div class="button-group mt-3">
+                        <button data-product="{{product.id}}" 
+                                data-action="add" 
+                                class="btn btn-primary add-btn update-cart">
+                            <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                        </button>
+                        <a href="{% url 'detail' %}?id={{product.id}}" 
+                           class="btn btn-outline-info">
+                            <i class="fas fa-info-circle"></i> Chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
+        {% endfor %}    
+        </div>
+        <style>
+            .product-card {
+                transition: transform 0.3s ease-in-out;
+                border: none;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+        
+            .product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            }
+        
+            .product-image {
+                border-radius: 8px 8px 0 0;
+            }
+        
+            .product-name {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 10px;
+                height: 48px;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+        
+            .price-tag {
+                font-size: 1.25rem;
+                font-weight: bold;
+                color: #e44d26;
+                margin: 10px 0;
+            }
+        
+            .button-group {
+                display: flex;
+                gap: 10px;
+                justify-content: space-between;
+            }
+        
+            .btn {
+                padding: 8px 15px;
+                border-radius: 5px;
+                font-weight: 500;
+            }
+        
+            .btn-primary {
+                background-color: #007bff;
+                border: none;
+            }
+        
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+        
+            .btn-outline-info {
+                color: #17a2b8;
+                border-color: #17a2b8;
+            }
+        
+            .btn-outline-info:hover {
+                background-color: #17a2b8;
+                color: white;
+            }
+        
+            @media (max-width: 768px) {
+                .col-md-6 {
+                    padding: 0 10px;
+                }
+                
+                .button-group {
+                    flex-direction: column;
+                }
+            }
+        </style>    
         <br /><br  /><br /> 
         {% endblock register %}
     </body>

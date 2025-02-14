@@ -321,9 +321,47 @@ def account_profile(request):
 @login_required
 def account_orders(request):
     user = request.user
+    profile, created = CustomerProfile.objects.get_or_create(user=user)
     orders = Order.objects.filter(Customer=user, complete=True).order_by('-date_order')
     current_order, created = Order.objects.get_or_create(Customer=user, complete=False)
     cartItems = current_order.get_cart_items
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        if action == 'update_profile':
+            try:
+                # Kiểm tra email
+                new_email = request.POST.get('email')
+                if new_email != user.email and User.objects.filter(email=new_email).exists():
+                    messages.error(request, 'Email này đã được sử dụng.')
+                    return redirect('account_profile')
+                
+                # Cập nhật thông tin cơ bản
+                user.first_name = request.POST.get('first_name')
+                user.last_name = request.POST.get('last_name')
+                user.email = new_email
+                user.save()
+                
+                # Cập nhật thông tin chi tiết
+                profile.phone = request.POST.get('phone')
+                profile.address = request.POST.get('address')
+                profile.city = request.POST.get('city')
+                profile.district = request.POST.get('district')
+                profile.ward = request.POST.get('ward')
+                
+                # Xử lý avatar
+                if 'avatar' in request.FILES:
+                    if profile.avatar:
+                        profile.avatar.delete()
+                    profile.avatar = request.FILES['avatar']
+                
+                profile.save()
+                messages.success(request, 'Cập nhật thông tin thành công!')
+                return redirect('account_profile')
+            except Exception as e:
+                messages.error(request, f'Lỗi: {str(e)}')
+                return redirect('account_profile')
     
     # Phân trang
     paginator = Paginator(orders, 10)
@@ -331,6 +369,7 @@ def account_orders(request):
     orders_page = paginator.get_page(page)
     
     context = {
+        'profile': profile,
         'orders': orders_page,
         'cartItems': cartItems,
     
@@ -364,7 +403,9 @@ def change_password(request):
     user = request.user
     current_order, created = Order.objects.get_or_create(Customer=user, complete=False)
     cartItems = current_order.get_cart_items
-    
+    profile, created = CustomerProfile.objects.get_or_create(user=user)
+
+
     if request.method == 'POST':
         form = PasswordChangeForm(user, request.POST)
         if form.is_valid():
@@ -380,7 +421,45 @@ def change_password(request):
     else:
         form = PasswordChangeForm(user)
     
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        if action == 'update_profile':
+            try:
+                # Kiểm tra email
+                new_email = request.POST.get('email')
+                if new_email != user.email and User.objects.filter(email=new_email).exists():
+                    messages.error(request, 'Email này đã được sử dụng.')
+                    return redirect('account_profile')
+                
+                # Cập nhật thông tin cơ bản
+                user.first_name = request.POST.get('first_name')
+                user.last_name = request.POST.get('last_name')
+                user.email = new_email
+                user.save()
+                
+                # Cập nhật thông tin chi tiết
+                profile.phone = request.POST.get('phone')
+                profile.address = request.POST.get('address')
+                profile.city = request.POST.get('city')
+                profile.district = request.POST.get('district')
+                profile.ward = request.POST.get('ward')
+                
+                # Xử lý avatar
+                if 'avatar' in request.FILES:
+                    if profile.avatar:
+                        profile.avatar.delete()
+                    profile.avatar = request.FILES['avatar']
+                
+                profile.save()
+                messages.success(request, 'Cập nhật thông tin thành công!')
+                return redirect('account_profile')
+            except Exception as e:
+                messages.error(request, f'Lỗi: {str(e)}')
+                return redirect('account_profile')
+
     context = {
+        'profile': profile,
         'form': form,
         'cartItems': cartItems,
     }

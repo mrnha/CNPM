@@ -196,11 +196,14 @@ def checkout(request):
                 order.transaction_id = f"ORD-{order.id}"
                 order.save()
 
+                # Lưu ID đơn hàng vào session để hiển thị thông báo
+                request.session['order_just_completed'] = order.id
+
                 # Tạo đơn hàng mới cho khách hàng
                 Order.objects.create(Customer=customer, complete=False)
 
-                messages.success(request, 'Đặt hàng thành công! Cảm ơn bạn đã mua hàng.')
-                return redirect('home')
+                # Chuyển hướng đến trang xác nhận đơn hàng
+                return redirect('order_confirmation', order_id=order.id)
 
             except Exception as e:
                 messages.error(request, f'Có lỗi xảy ra: {str(e)}')
@@ -327,6 +330,7 @@ def account_orders(request):
     context = {
         'orders': orders_page,
         'cartItems': cartItems,
+    
     }
     return render(request, 'app/account/orders.html', context)
 
@@ -423,3 +427,4 @@ def get_context_data(request):
             context['cartItems'] = 0
             
     return context
+

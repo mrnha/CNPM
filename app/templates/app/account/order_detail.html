@@ -1,0 +1,173 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block order_detail %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% endif %}
+                    <h5 class="card-title">{{ user.get_full_name }}</h5>
+                    <p class="text-muted">{{ user.email }}</p>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'account_dashboard' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-home"></i> Trang chủ
+                    </a>
+                    <a href="{% url 'account_profile' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user"></i> Thông tin cá nhân
+                    </a>
+                    <a href="{% url 'account_orders' %}" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-shopping-bag"></i> Đơn hàng
+                    </a>
+                    <a href="{% url 'change_password' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-key"></i> Đổi mật khẩu
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Chi tiết đơn hàng #{{ order.id }}</h5>
+                    <a href="{% url 'account_orders' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+                <div class="card-body">
+                    <!-- Thông tin đơn hàng -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Thông tin đơn hàng</h6>
+                            <p class="mb-1"><strong>Mã đơn hàng:</strong> #{{ order.id }}</p>
+                            <p class="mb-1"><strong>Ngày đặt:</strong> {{ order.date_order|date:"d/m/Y H:i" }}</p>
+                            <p class="mb-1">
+                                <strong>Trạng thái:</strong>
+                                {% if order.complete %}
+                                    <span class="badge bg-success">Hoàn thành</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Đang xử lý</span>
+                                {% endif %}
+                            </p>
+                            <p class="mb-1"><strong>Tổng tiền:</strong> {{ order.get_cart_total|floatformat:0 }}₫</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Thông tin giao hàng</h6>
+                            <p class="mb-1"><strong>Người nhận:</strong> {{ shipping.name }}</p>
+                            <p class="mb-1"><strong>Số điện thoại:</strong> {{ shipping.phone }}</p>
+                            <p class="mb-1"><strong>Email:</strong> {{ shipping.email }}</p>
+                            <p class="mb-1"><strong>Địa chỉ:</strong> {{ shipping.address }}, {{ shipping.ward }}, {{ shipping.district }}, {{ shipping.city }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Chi tiết sản phẩm -->
+                    <h6 class="text-muted mb-3">Chi tiết sản phẩm</h6>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Đơn giá</th>
+                                    <th>Số lượng</th>
+                                    <th class="text-end">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.orderitem_set.all %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ item.product.ImageURL }}" alt="{{ item.product.name }}" 
+                                                 class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                            <div>
+                                                <h6 class="mb-0">{{ item.product.name }}</h6>
+                                                <small class="text-muted">{{ item.product.category.name }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ item.product.price|floatformat:0 }}₫</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td class="text-end">{{ item.get_total|floatformat:0 }}₫</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
+                                    <td class="text-end"><strong>{{ order.get_cart_total|floatformat:0 }}₫</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Nút tác vụ -->
+                    <div class="text-end mt-4">
+                        <button class="btn btn-outline-secondary me-2" onclick="window.print()">
+                            <i class="fas fa-print"></i> In đơn hàng
+                        </button>
+                        {% if not order.complete %}
+                            <button class="btn btn-danger" onclick="cancelOrder({{ order.id }})">
+                                <i class="fas fa-times"></i> Hủy đơn hàng
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .sidebar, .navbar, .footer, .btn {
+            display: none !important;
+        }
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .badge {
+        font-size: 0.9em;
+        padding: 0.5em 0.75em;
+    }
+</style>
+
+<script>
+function cancelOrder(orderId) {
+    if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
+        fetch(`/cancel-order/${orderId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert('Không thể hủy đơn hàng. Vui lòng thử lại sau.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+        });
+    }
+}
+</script>
+{% endblock order_detail %} 

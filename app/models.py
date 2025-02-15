@@ -9,8 +9,10 @@ class Category (models.Model):
     is_sub = models.BooleanField(default=False)
     name = models.CharField(max_length=200, null=True)
     slug = models.SlugField(max_length=200, unique=True)
+    
     def __str__(self):
         return self.name
+    
 
 class CreateUserForm(UserCreationForm):
  class Meta:

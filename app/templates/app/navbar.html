@@ -1,132 +1,115 @@
+
+
 {% load static %}
 
 
-
+<div>
 <!--Header -->
-<nav class="navbar navbar-expand-lg bg-light">
-  <div class="container-fluid">
-     <a class="navbar-brand" href="{% url 'home' %}">
-    <img src="{% static 'app/images/logo.png' %}" width="70" height="70"> <!--logo-->
-    <a/>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Trang Chủ</a>
-        </li>
-      
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Sản Phẩm
-          </a>
-          <ul class="dropdown-menu">
-            {% for category in categories %}
-            <li><a class="dropdown-item" href="{% url 'category'%}?category={{category.slug}}">{{ category.name }}</a></li>
-            {% endfor %}
-          </ul>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'cart'%}">Cart</a>
-          </li>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Liên Hệ</a>
-        </li>
-      </ul>
-      <form class="d-flex" role="search" method= POST action="{% url 'search' %}">
-        {% csrf_token %}
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searched">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
-      <div class="navbar-nav ms-auto">
-          {% if user.is_authenticated %}
-              <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
-                      <div class="avatar avatar-online">
-                          {% if user.customerprofile.avatar %}
-                              <img src="{{ user.customerprofile.avatar.url }}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
-                          {% else %}
-                              <img src="{% static 'images/default-avatar.png' %}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
-                          {% endif %}
-                      </div>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end">
-                      <li>
-                          <a class="dropdown-item" href="{% url 'account_dashboard' %}">
-                              <div class="d-flex align-items-center">
-                                  <div class="flex-shrink-0 me-3">
-                                      <div class="avatar avatar-online">
-                                          {% if user.customerprofile.avatar %}
-                                              <img src="{{ user.customerprofile.avatar.url }}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
-                                          {% else %}
-                                              <img src="{% static 'images/default-avatar.png' %}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
-                                          {% endif %}
-                                      </div>
-                                  </div>
-                                  <div class="flex-grow-1">
-                                      <h6 class="mb-0">{{ user.get_full_name|default:user.username }}</h6>
-                                      <small class="text-muted">{% if user.is_staff %}Admin{% else %}Khách hàng{% endif %}</small>
-                                  </div>
-                              </div>
-                          </a>
-                      </li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li>
-                          <a class="dropdown-item" href="{% url 'account_profile' %}">
-                              <i class="fas fa-user fa-fw me-3"></i>
-                              <span>Thông tin cá nhân</span>
-                          </a>
-                      </li>
-                      <li>
-                          <a class="dropdown-item" href="{% url 'account_orders' %}">
-                              <i class="fas fa-shopping-bag fa-fw me-3"></i>
-                              <span>Đơn hàng</span>
-                              {% if pending_orders_count > 0 %}
-                                  <span class="badge rounded-pill bg-danger ms-auto">{{ pending_orders_count }}</span>
-                              {% endif %}
-                          </a>
-                      </li>
-                      <li>
-                          <a class="dropdown-item" href="{% url 'change_password' %}">
-                              <i class="fas fa-key fa-fw me-3"></i>
-                              <span>Đổi mật khẩu</span>
-                          </a>
-                      </li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li>
-                          <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-                              <i class="fas fa-sign-out-alt fa-fw me-3"></i>
-                              <span>Đăng xuất</span>
-                          </a>
-                      </li>
-                  </ul>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="{% url 'cart' %}">
-                      <i class="fas fa-shopping-cart"></i>
-                      <span class="badge rounded-pill bg-danger">{{ cartItems }}</span>
-                  </a>
-              </li>
-          {% else %}
-              <li class="nav-item">
-                  <a class="nav-link" href="{% url 'login' %}">
-                      <i class="fas fa-sign-in-alt"></i> Đăng nhập
-                  </a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="{% url 'register' %}">
-                      <i class="fas fa-user-plus"></i> Đăng ký
-                  </a>
-              </li>
-          {% endif %}
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <!-- Logo -->
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <img src="{% static 'app/images/logo.png' %}" alt="Logo" width="70" height="70">
+    </a>
+
+    <!-- Search Form -->
+    <form class="d-flex search-form" role="search" method="POST" action="{% url 'search' %}">
+      {% csrf_token %}
+      <div class="input-group">
+        <input class="form-control" type="search" placeholder="Tìm kiếm sản phẩm..." name="searched">
+        <button class="btn btn-primary" type="submit">
+          <i class="fas fa-search"></i>
+        </button>
       </div>
+    </form>
+
+    <!-- User Menu -->
+    <div class="navbar-nav ms-auto user-menu">
+      {% if user.is_authenticated %}
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
+            <div class="avatar avatar-online">
+              {% if user.customerprofile.avatar %}
+                <img src="{{ user.customerprofile.avatar.url }}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+              {% else %}
+                <img src="{% static 'images/default-avatar.png' %}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+              {% endif %}
+            </div>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" href="{% url 'account_dashboard' %}">
+                <div class="d-flex align-items-center">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar avatar-online">
+                      {% if user.customerprofile.avatar %}
+                        <img src="{{ user.customerprofile.avatar.url }}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                      {% else %}
+                        <img src="{% static 'images/default-avatar.png' %}" alt="avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="mb-0">{{ user.get_full_name|default:user.username }}</h6>
+                    <small class="text-muted">{% if user.is_staff %}Admin{% else %}Khách hàng{% endif %}</small>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="{% url 'account_profile' %}">
+                <i class="fas fa-user fa-fw me-3"></i>
+                <span>Thông tin cá nhân</span>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'account_orders' %}">
+                <i class="fas fa-shopping-bag fa-fw me-3"></i>
+                <span>Đơn hàng</span>
+                {% if pending_orders_count > 0 %}
+                  <span class="badge rounded-pill bg-danger ms-auto">{{ pending_orders_count }}</span>
+                {% endif %}
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'change_password' %}">
+                <i class="fas fa-key fa-fw me-3"></i>
+                <span>Đổi mật khẩu</span>
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                <i class="fas fa-sign-out-alt fa-fw me-3"></i>
+                <span>Đăng xuất</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-item cart-icon">
+          <a class="nav-link" href="{% url 'cart' %}">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="badge rounded-pill bg-danger">{{ cartItems }}</span>
+          </a>
+        </div>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">
+            <i class="fas fa-sign-in-alt"></i> Đăng nhập
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'register' %}">
+            <i class="fas fa-user-plus"></i> Đăng ký
+          </a>
+        </li>
+      {% endif %}
     </div>
   </div>
 </nav>
-
 <!-- Thêm ngay sau phần navbar -->
-{% if messages %}
+ {% if messages %}
     <div class="container mt-3">
         {% for message in messages %}
             <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} d-flex align-items-center" role="alert">
@@ -139,10 +122,80 @@
             </div>
         {% endfor %}
     </div>
-{% endif %}
+ {% endif %}
+<!-- Category Menu -->
+<div class="category-menu">
+  <div class="container">
+    <div class="category-wrapper">
+      <!-- Category Toggle with Dropdown -->
+      <div class="category-toggle dropdown">
+        <div class="toggle-button" data-bs-toggle="dropdown">
+          <i class="fas fa-bars"></i>
+          <span>Danh Mục Sản Phẩm</span>
+          <i class="fas fa-chevron-down ms-2"></i>
+        </div>
+        
+        <!-- Mega Menu Dropdown -->
+        <div class="dropdown-menu mega-menu">
+          <ul class="list-menu">
+            <!-- Sữa bột dinh dưỡng -->
+            <li class="menu-item" data-submenu-id="1">
+              <a href="#">
+                <span>SỮA BỘT DINH DƯỠNG</span>
+                <i class="fas fa-chevron-right"></i>
+              </a>
+              <div class="submenu submenu1">
+                <ul class="submenu-grid">
+                  <li>
+                    <a href="">
+                      <div class="brand-image">
+                        <img src="" alt="Abbott">
+                      </div>
+                      <p>Abbott</p>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="">
+                      <div class="brand-image">
+                        <img src="" alt="Nestle">
+                      </div>
+                      <p>Nestle</p>
+                    </a>
+                  </li>
+                  <!-- Thêm các thương hiệu khác -->
+                </ul>
+              </div>
+            </li>
 
+            <!-- Sữa nước -->
+            <li class="menu-item" data-submenu-id="2">
+              <a href="#">
+                <span>SỮA NƯỚC CÁC LOẠI</span>
+                <i class="fas fa-chevron-right"></i>
+              </a>
+              <div class="submenu submenu2">
+                <!-- Nội dung tương tự -->
+              </div>
+            </li>
+
+            <!-- Copy các mục menu khác tương tự -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- Main Navigation -->
+      <ul class="main-nav">
+        <li><a href="{% url 'home' %}">Trang Chủ</a></li>
+        <li><a href="">Giới thiệu</a></li>
+        <li><a href="">Kiến Thức</a></li>
+        <li><a href="">Khuyến mãi</a></li>
+        <li><a href="">Liên hệ</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
 <style>
-.alert {
+  .alert {
     margin-bottom: 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -222,4 +275,259 @@
     position: relative;
     display: inline-block;
 }
+
+/* New Styles */
+.navbar {
+  background: #fff;
+  padding: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.search-form {
+  flex: 1;
+  max-width: 500px;
+  margin: 0 2rem;
+}
+
+.search-form .input-group {
+  border-radius: 50px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.search-form .form-control {
+  border: none;
+  padding: 0.8rem 1.5rem;
+}
+
+.search-form .btn {
+  padding: 0.8rem 1.5rem;
+  border: none;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cart-icon {
+  position: relative;
+}
+
+.cart-icon .badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+}
+
+/* Category Menu Styles */
+.category-menu {
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.category-wrapper {
+  display: flex;
+  align-items: center;
+  height: 50px;
+}
+
+.category-toggle {
+  position: relative;
+}
+
+.toggle-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.5rem;
+  height: 50px;
+  background: #0066cc;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  min-width: 200px;
+}
+
+.mega-menu {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 250px;
+  padding: 0;
+  margin: 0;
+  border-radius: 0 0 4px 4px;
+  border: 1px solid #eee;
+  border-top: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.list-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  position: relative;
+}
+
+.menu-item > a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  color: #333;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+  transition: all 0.3s;
+}
+
+.menu-item:hover > a {
+  background: #f8f9fa;
+  color: #0066cc;
+}
+
+.submenu {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: 800px;
+  background: white;
+  border: 1px solid #eee;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+.menu-item:hover .submenu {
+  display: block;
+}
+
+.submenu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.brand-image {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.submenu-grid li a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s;
+}
+
+.submenu-grid li a:hover {
+  color: #0066cc;
+  transform: translateY(-2px);
+}
+
+.submenu-grid li p {
+  margin: 5px 0 0;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .category-wrapper {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .toggle-button {
+    width: 100%;
+  }
+  
+  .mega-menu {
+    width: 100%;
+    position: static;
+  }
+  
+  .submenu {
+    width: 100%;
+    position: static;
+    box-shadow: none;
+  }
+  
+  .submenu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin: 0;
+  padding: 0 2rem;
+  list-style: none;
+}
+
+.main-nav a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.main-nav a:hover {
+  color: #0066cc;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .search-form {
+    margin: 1rem 0;
+  }
+  
+  .category-wrapper {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .main-nav {
+    padding: 1rem;
+    flex-wrap: wrap;
+  }
+}
 </style>
+    
+  
+
+<script>
+$(document).ready(function() {
+  // Thêm class active khi hover
+  $('.menu-item').hover(
+    function() {
+      $(this).addClass('active');
+      var submenuId = $(this).data('submenu-id');
+      $('.submenu' + submenuId).addClass('active');
+    },
+    function() {
+      $(this).removeClass('active');
+      $('.submenu').removeClass('active');
+    }
+  );
+});
+</script>
+</div>

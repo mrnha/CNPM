@@ -1,5 +1,4 @@
 {% load static%}
-
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -57,9 +56,10 @@
     <body>
         
 
-        <!--header-->
-          {% block navbar %}{% endblock navbar %}
-        
+     
+          {%block navbar%}         
+          {% endblock navbar%}
+
           <!--main body-->
           {% block banner_slider%} {% endblock banner_slider %}
           {% block main-content%} {% endblock main-content %}

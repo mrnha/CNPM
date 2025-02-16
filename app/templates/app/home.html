@@ -5,10 +5,6 @@
        {% include 'app/navbar.html' %}
 {% endblock navbar %}
 
-
-
-<div>
-  </div>
 {% block banner_slider%} 
 <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel" data-bs-interval="3000">
     <div class="carousel-indicators">
@@ -241,7 +237,252 @@
     }
 </style>    
     </div>
-    <!--<br /><br  /><br /> 
+     <!--báo chí/-->
+     <div class="row">
+        <!-- Bài viết lớn bên trái -->
+        <div class="col-lg-6 col-md-12 col-12">
+            <!-- Blog lớn -->
+            <div class="block-content mb-3">
+                <div class="item-blog-index large-blog">
+                    <div class="blog-img">
+                        <a href="{% url 'blog_detail' 1 %}" title="Uống Sữa Trong Thời Gian Nào Là Tốt Nhất Cho Sức Khoẻ">
+                            <img class="img-responsive lazyload" 
+                                src="https://bizweb.dktcdn.net/100/416/540/articles/uong-sua-trong-thoi-gian-nao-la-tot-nhat-cho-suc-khoe.jpg?v=1737012850827" 
+                                alt="Uống Sữa Trong Thời Gian Nào Là Tốt Nhất Cho Sức Khoẻ">
+                        </a>
+                        <div class="day">
+                            <span class="dd">03</span>
+                            <span>T 02</span>
+                        </div>
+                    </div>
+                    <div class="blog-content">
+                        <h3><a href="{% url 'blog_detail' 1 %}">Uống Sữa Trong Thời Gian Nào Là Tốt Nhất Cho Sức Khoẻ?</a></h3>
+                        <div class="justify des">Sữa là một thực phẩm giàu dinh dưỡng, tiện lợi và phù hợp với sức khỏe của mọi lứa tuổi. Tuy nhiên, để hấp thụ tốt các dưỡng chất từ sữa, bạn cần uống đúng thời điểm và tuân theo một chế độ uống hợp lý...</div>
+                        <div class="cmt-author">
+                            <span>0 Bình luận</span> | 
+                            <span><i class="fas fa-user"></i> ADMIN CHICKENMILK</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nút Mẹo cho mẹ -->
+            <div class="tips-button-container">
+                <a href="{% url 'promotions' %}" class="btn btn-tips">
+                    <span class="btn-content">
+                        <i class="fas fa-tags khuyen-mai-lon"></i>
+                        Khuyến mãi lớn
+                    </span>
+                    <span class="btn-glow"></span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 2 Bài viết nhỏ bên phải -->
+        <div class="col-lg-6 col-md-12 col-12">
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="item-blog-index small-blog">
+                        <!-- Blog nhỏ 1 -->
+                        <div class="blog-img">
+                            <a href="{% url 'blog_detail' 2 %}" title="Tại Sao Dân Văn Phòng Nên Bổ Sung Sữa Hằng Ngày?">
+                                <img class="img-responsive lazyload" 
+                                    src="https://bizweb.dktcdn.net/100/416/540/articles/tai-sao-dan-van-phong-nen-bo-sung-sua.jpg?v=1736494525510" 
+                                    alt="Tại Sao Dân Văn Phòng Nên Bổ Sung Sữa Hằng Ngày?" 
+                                    data-was-processed="true">
+                            </a>
+                            <div class="day d-md-block d-none">
+                                <span class="dd">09</span>
+                                <span>T 01</span>
+                            </div>
+                        </div>
+                        <div class="blog-content">
+                            <h3><a href="{% url 'blog_detail' 2 %}">Tại Sao Dân Văn Phòng Nên Bổ Sung Sữa Hằng Ngày?</a></h3>
+                            <div class="justify des">Người làm văn phòng dù không phải lao động nặng nhọc hay tiếp xúc với ánh nắng mặt trời nhưng vẫn dễ gặp các vấn đề sức khỏe như thiếu...</div>
+                            <div class="cmt-author">
+                                <span>0 Bình luận</span> | 
+                                <span>
+                                    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-inline--fa fa-user fa-w-14">
+                                        <path fill="currentColor" d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z" class=""></path>
+                                    </svg>
+                                    ADMIN CHICKENMILK
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="item-blog-index small-blog">
+                        <!-- Blog nhỏ 2 -->
+                        <div class="blog-img">
+                            <a href="{% url 'blog_detail' 3 %}" title="Top 5 Cách Tiệt Trùng Bình Sữa An Toàn, Dễ Thực Hiện">
+                                <img class="img-responsive lazyload" 
+                                    src="https://bizweb.dktcdn.net/100/416/540/articles/top-5-cach-tiet-trung-binh-sua-an-toan.jpg?v=1735639320553" 
+                                    alt="Top 5 Cách Tiệt Trùng Bình Sữa An Toàn, Dễ Thực Hiện" 
+                                    data-was-processed="true">
+                            </a>
+                            <div class="day d-md-block d-none">
+                                <span class="dd">31</span>
+                                <span>T 12</span>
+                            </div>
+                        </div>
+                        <div class="blog-content">
+                            <h3><a href="{% url 'blog_detail' 3 %}">Top 5 Cách Tiệt Trùng Bình Sữa An Toàn, Dễ Thực Hiện</a></h3>
+                            <div class="justify des">Bình sữa là vật dụng không thể thiếu với trẻ nhỏ, nên cần được vệ sinh và tiệt trùng đúng cách để đảm bảo sức khỏe cho bé. Dưới đây...</div>
+                            <div class="cmt-author">
+                                <span>0 Bình luận</span> | 
+                                <span>
+                                    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-inline--fa fa-user fa-w-14">
+                                        <path fill="currentColor" d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z" class=""></path>
+                                    </svg>
+                                    ADMIN CHICKENMILK
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .item-blog-index {
+        margin-bottom: 30px;
+        background: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .large-blog .blog-img img {
+        height: 450px; /* Điều chỉnh chiều cao ảnh blog */
+        object-fit: cover;
+    }
+
+    .small-blog .blog-img img {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .blog-img {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .blog-img img {
+        width: 100%;
+        transition: transform 0.3s ease;
+    }
+
+    .blog-img:hover img {
+        transform: scale(1.05);
+    }
+
+    .blog-content {
+        padding: 20px;
+    }
+
+    .blog-content h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .blog-content h3 a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .blog-content h3 a:hover {
+        color: #007bff;
+    }
+
+    .des {
+        color: #666;
+        margin-bottom: 15px;
+        line-height: 1.5;
+    }
+
+    .day {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-align: center;
+    }
+
+    .day .dd {
+        font-size: 1.2em;
+        font-weight: bold;
+        display: block;
+    }
+
+    .cmt-author {
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .tips-button-container {
+        text-align: center;
+        padding: 20px 0; /* Giảm padding */
+        margin-top: 15px;
+    }
+
+    .btn-tips {
+        position: relative;
+        padding: 20px 60px; /* Giảm padding */
+        font-size: 1.8rem; /* Giảm font size */
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+        border: none;
+        border-radius: 35px; /* Giảm border radius */
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 25px rgba(255, 107, 107, 0.4);
+        display: inline-block;
+        min-width: 300px; /* Giảm min-width */
+    }
+
+    .btn-tips .btn-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px; /* Giảm gap */
+    }
+
+    .btn-tips i {
+        transition: all 0.3s ease;
+        font-size: 1.8rem; /* Giảm kích thước icon */
+    }
+
+    .btn-tips:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(255, 107, 107, 0.5);
+    }
+
+    .btn-tips:active {
+        transform: translateY(-2px);
+    }
+
+    @keyframes bulb-glow {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.2); /* Giảm scale animation */
+            opacity: 0.8;
+        }
+    }
+
+</style>
+
     <!-- Thêm footer mới -->
 <footer class="footer mt-5">
   <div class="container">

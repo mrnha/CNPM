@@ -510,3 +510,50 @@ def get_context_data(request):
             
     return context
 
+def blog_detail(request, blog_id):
+    # Tạo dictionary chứa dữ liệu blog (tạm thời hard-code)
+    blogs = {
+        1: {
+            'title': 'Uống Sữa Trong Thời Gian Nào Là Tốt Nhất Cho Sức Khoẻ?',
+            'content': 'Nội dung chi tiết về thời gian uống sữa...',
+            'image': 'https://bizweb.dktcdn.net/100/416/540/articles/uong-sua-trong-thoi-gian-nao-la-tot-nhat-cho-suc-khoe.jpg?v=1737012850827',
+            'date': '03/02/2024',
+            'author': 'ADMIN CHICKENMILK'
+        },
+        2: {
+            'title': 'Tại Sao Dân Văn Phòng Nên Bổ Sung Sữa Hằng Ngày?',
+            'content': 'Nội dung chi tiết về bổ sung sữa cho dân văn phòng...',
+            'image': 'https://bizweb.dktcdn.net/100/416/540/articles/tai-sao-dan-van-phong-nen-bo-sung-sua.jpg?v=1736494525510',
+            'date': '09/01/2024',
+            'author': 'ADMIN CHICKENMILK'
+        },
+        3: {
+            'title': 'Top 5 Cách Tiệt Trùng Bình Sữa An Toàn, Dễ Thực Hiện',
+            'content': 'Nội dung chi tiết về cách tiệt trùng bình sữa...',
+            'image': 'https://bizweb.dktcdn.net/100/416/540/articles/top-5-cach-tiet-trung-binh-sua-an-toan.jpg?v=1735639320553',
+            'date': '31/12/2023',
+            'author': 'ADMIN CHICKENMILK'
+        }
+    }
+    
+    blog = blogs.get(blog_id)
+    if not blog:
+        return redirect('home')  # Redirect về trang chủ nếu không tìm thấy blog
+        
+    context = {'blog': blog}
+    return render(request, 'app/blog_detail.html', context)
+
+def promotions(request):
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(Customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+    
+    context = {'cartItems': cartItems}
+    return render(request, 'app/promotions.html', context)
+

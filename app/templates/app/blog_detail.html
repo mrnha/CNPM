@@ -1,0 +1,59 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <article class="blog-post">
+                <h1 class="blog-title mb-4">{{ blog.title }}</h1>
+                
+                <div class="blog-meta mb-4">
+                    <span class="date"><i class="far fa-calendar-alt"></i> {{ blog.date }}</span>
+                    <span class="author"><i class="far fa-user"></i> {{ blog.author }}</span>
+                </div>
+                
+                <div class="blog-image mb-4">
+                    <img src="{{ blog.image }}" alt="{{ blog.title }}" class="img-fluid">
+                </div>
+                
+                <div class="blog-content">
+                    {{ blog.content|linebreaks }}
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+<style>
+    .blog-post {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    
+    .blog-title {
+        color: #333;
+        font-weight: 700;
+    }
+    
+    .blog-meta {
+        color: #666;
+    }
+    
+    .blog-meta span {
+        margin-right: 20px;
+    }
+    
+    .blog-meta i {
+        margin-right: 5px;
+    }
+    
+    .blog-content {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #444;
+    }
+</style>
+{% endblock %} 

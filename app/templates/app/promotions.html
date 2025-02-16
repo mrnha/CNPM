@@ -1,0 +1,182 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block navbar %}
+    {% include 'app/navbar.html' with cartItems=cartItems %}
+{% endblock navbar %}
+
+{% block main-content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Chương Trình Khuyến Mãi</h2>
+    
+    <!-- Banner khuyến mãi -->
+    <div class="promotion-banner mb-5">
+        <img src="{% static 'app/images/banner/kmdb.jpg' %}" alt="Khuyến mãi đặc biệt" class="w-100">
+    </div>
+
+    <!-- Danh sách khuyến mãi -->
+    <div class="row">
+        <!-- Khuyến mãi 1 -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="promotion-card">
+                <div class="promotion-image">
+                    <span class="discount-badge">-30%</span>
+                    <img src="{% static 'app/images/banner/b1.jpg' %}" alt="Khuyến mãi 1">
+                </div>
+                <div class="promotion-content">
+                    <h3>Siêu Sale Tết Rồng Vàng</h3>
+                    <p class="promotion-period">Từ 25/01 - 10/02/2024</p>
+                    <p class="promotion-description">Giảm giá đến 30% cho tất cả các sản phẩm sữa bột và tã bỉm</p>
+                    <div class="promotion-code">
+                        <span>Mã: TETRONGVANG</span>
+                        <button class="copy-btn" onclick="copyCode('TETRONGVANG')">Sao chép</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Khuyến mãi 2 -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="promotion-card">
+                <div class="promotion-image">
+                    <span class="discount-badge">-50%</span>
+                    <img src="{% static 'app/images/banner/b2.jpg' %}" alt="Khuyến mãi 2">
+                </div>
+                <div class="promotion-content">
+                    <h3>Flash Sale Cuối Tuần</h3>
+                    <p class="promotion-period">Mỗi Thứ 7 & Chủ Nhật</p>
+                    <p class="promotion-description">Giảm sốc 50% cho đơn hàng từ 1.000.000đ</p>
+                    <div class="promotion-code">
+                        <span>Mã: WEEKEND50</span>
+                        <button class="copy-btn" onclick="copyCode('WEEKEND50')">Sao chép</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Khuyến mãi 3 -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="promotion-card">
+                <div class="promotion-image">
+                    <span class="discount-badge">Quà</span>
+                    <img src="{% static 'app/images/banner/b3.jpg' %}" alt="Khuyến mãi 3">
+                </div>
+                <div class="promotion-content">
+                    <h3>Mua Sữa Tặng Quà</h3>
+                    <p class="promotion-period">Đến hết 29/02/2024</p>
+                    <p class="promotion-description">Tặng bình sữa cao cấp cho đơn hàng từ 500.000đ</p>
+                    <div class="promotion-code">
+                        <span>Mã: QUATANG</span>
+                        <button class="copy-btn" onclick="copyCode('QUATANG')">Sao chép</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .promotion-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .promotion-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .promotion-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .promotion-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .discount-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #ff4444;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    .promotion-content {
+        padding: 20px;
+    }
+
+    .promotion-content h3 {
+        color: #333;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .promotion-period {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .promotion-description {
+        color: #444;
+        margin-bottom: 15px;
+        line-height: 1.4;
+    }
+
+    .promotion-code {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .promotion-code span {
+        font-family: monospace;
+        font-weight: bold;
+        color: #666;
+    }
+
+    .copy-btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 5px 15px;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+        background: #0056b3;
+    }
+
+    @media (max-width: 768px) {
+        .promotion-card {
+            margin-bottom: 20px;
+        }
+    }
+</style>
+
+<script>
+    function copyCode(code) {
+        navigator.clipboard.writeText(code).then(function() {
+            alert('Đã sao chép mã: ' + code);
+        }, function(err) {
+            console.error('Không thể sao chép mã: ', err);
+        });
+    }
+</script>
+
+{% endblock main-content %} 

@@ -33,3 +33,32 @@ admin.site.register(Blog, BlogAdmin)
 admin.site.register(BlogCategory, BlogCategoryAdmin)
 admin.site.register(BlogComment, BlogCommentAdmin)
 
+class PromotionAdmin(admin.ModelAdmin):
+    list_display = ('title', 'code', 'discount_type', 'discount_display', 'start_date', 'end_date', 'is_active', 'is_valid')
+    list_filter = ('discount_type', 'is_active', 'start_date', 'end_date')
+    search_fields = ('title', 'code', 'description')
+    readonly_fields = ('used_count',)
+    fieldsets = (
+        ('Thông tin cơ bản', {
+            'fields': ('title', 'code', 'description', 'terms_conditions')
+        }),
+        ('Hình ảnh', {
+            'fields': ('banner_image', 'card_image')
+        }),
+        ('Giảm giá', {
+            'fields': ('discount_type', 'discount_percent', 'discount_amount', 'min_order_value', 'max_discount_amount')
+        }),
+        ('Thời gian & Giới hạn', {
+            'fields': ('start_date', 'end_date', 'usage_limit', 'used_count', 'is_active')
+        }),
+    )
+
+class PromotionUsageAdmin(admin.ModelAdmin):
+    list_display = ('promotion', 'user', 'order', 'used_date', 'discount_amount')
+    list_filter = ('used_date', 'promotion')
+    search_fields = ('promotion__code', 'user__username', 'order__id')
+    readonly_fields = ('used_date',)
+
+admin.site.register(Promotion, PromotionAdmin)
+admin.site.register(PromotionUsage, PromotionUsageAdmin)
+

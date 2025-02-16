@@ -139,7 +139,7 @@
                 <div class="card-body">
                     <h5 class="card-title product-name">{{ product.name }}</h5>
                     <div class="price-tag">
-                        <span class="price">{{product.price|floatformat:3}} VNĐ</span>
+                        <span class="price">{{product.price}} VNĐ</span>
                     </div>
                     
                     <!-- Buttons -->
@@ -445,6 +445,7 @@
         box-shadow: 0 6px 25px rgba(255, 107, 107, 0.4);
         display: inline-block;
         min-width: 300px; /* Giảm min-width */
+        text-decoration: none;
     }
 
     .btn-tips .btn-content {
@@ -464,6 +465,7 @@
     .btn-tips:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 30px rgba(255, 107, 107, 0.5);
+        color: white;
     }
 
     .btn-tips:active {
@@ -479,6 +481,12 @@
             transform: scale(1.2); /* Giảm scale animation */
             opacity: 0.8;
         }
+    }
+
+    /* Add active state for navigation */
+    .main-nav a.active {
+        color: #007bff;
+        font-weight: bold;
     }
 
 </style>

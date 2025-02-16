@@ -8,7 +8,7 @@ from decimal import Decimal
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.paginator import Paginator
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
@@ -561,94 +561,87 @@ def blog_detail(request, blog_id):
         return redirect('home')
 
 def promotions(request):
-    # Chỉ lấy các trường đã tồn tại trong database
-    promotions = Promotion.objects.filter(
+    # Lấy tất cả khuyến mãi còn hiệu lực
+    active_promotions = Promotion.objects.filter(
         is_active=True,
         start_date__lte=timezone.now(),
         end_date__gte=timezone.now()
-    ).values(
-        'code',
-        'discount_percent',
-        'start_date',
-        'end_date',
-        'is_active',
-        'min_order_value'
-    )
-    
-    if request.user.is_authenticated:
-        customer = request.user
-        order, created = Order.objects.get_or_create(Customer=customer, complete=False)
-        cartItems = order.get_cart_items
-    else:
-        order = {'get_cart_total': 0, 'get_cart_items': 0}
-        cartItems = order['get_cart_items']
-    
+    ).order_by('-start_date')
+
+    # Lấy khuyến mãi nổi bật (có ảnh banner)
+    featured_promotions = active_promotions.exclude(banner_image='')[:5]
+
     context = {
-        'promotions': promotions,
-        'cartItems': cartItems
+        'promotions': active_promotions,
+        'featured_promotions': featured_promotions
     }
     return render(request, 'app/promotions.html', context)
 
-@require_POST
-def check_promotion(request):
-    data = json.loads(request.body)
-    code = data.get('code')
-    order_total = data.get('order_total')
-    
+def format_price(value):
+    """Helper function để format giá tiền"""
     try:
-        promotion = Promotion.objects.get(
-            code=code,
-            is_active=True,
-            start_date__lte=timezone.now(),
-            end_date__gte=timezone.now()
-        )
+        return f"{int(value):,}₫"
+    except (ValueError, TypeError):
+        return "0₫"
+
+@require_http_methods(["POST"])
+def apply_promotion(request):
+    try:
+        data = json.loads(request.body)
+        code = data.get('code')
+        order_total = float(data.get('order_total', 0))
         
-        if order_total < promotion.min_order_value:
+        try:
+            promotion = Promotion.objects.get(
+                code=code,
+                is_active=True,
+                start_date__lte=timezone.now(),
+                end_date__gte=timezone.now()
+            )
+            
+            # Kiểm tra giá trị đơn hàng tối thiểu
+            if order_total < promotion.min_order_value:
+                return JsonResponse({
+                    'valid': False,
+                    'message': f'Đơn hàng tối thiểu phải từ {format_price(promotion.min_order_value)}'
+                })
+            
+            # Tính số tiền giảm
+            if promotion.discount_type == 'PERCENT':
+                discount_amount = (order_total * promotion.discount_percent) / 100
+                if promotion.max_discount_amount:
+                    discount_amount = min(discount_amount, promotion.max_discount_amount)
+                discount_display = f"{promotion.discount_percent:.1f}%"
+            else:
+                discount_amount = promotion.discount_amount
+                discount_display = format_price(promotion.discount_amount)
+            
+            final_total = order_total - discount_amount
+            
+            return JsonResponse({
+                'valid': True,
+                'discount_display': discount_display,
+                'discount_amount': discount_amount,
+                'discount_amount_display': format_price(discount_amount),
+                'final_total_display': format_price(final_total)
+            })
+            
+        except Promotion.DoesNotExist:
             return JsonResponse({
                 'valid': False,
-                'message': f'Mã giảm giá chỉ áp dụng cho đơn hàng từ {promotion.min_order_value} VNĐ'
+                'message': 'Mã khuyến mãi không hợp lệ hoặc đã hết hạn'
             })
-        
-        return JsonResponse({
-            'valid': True,
-            'discount_percent': promotion.discount_percent
-        })
-        
-    except Promotion.DoesNotExist:
+            
+    except json.JSONDecodeError:
         return JsonResponse({
             'valid': False,
-            'message': 'Mã khuyến mãi không hợp lệ hoặc đã hết hạn'
+            'message': 'Dữ liệu không hợp lệ'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'valid': False,
+            'message': 'Có lỗi xảy ra, vui lòng thử lại'
         })
 
-# Cập nhật hàm process_order để xử lý mã khuyến mãi
-@login_required
-def process_order(request):
-    if request.method == 'POST':
-        # ... existing code ...
-        
-        # Xử lý mã khuyến mãi nếu có
-        promotion_code = request.POST.get('promotion_code')
-        if promotion_code:
-            try:
-                promotion = Promotion.objects.get(
-                    code=promotion_code,
-                    is_active=True,
-                    start_date__lte=timezone.now(),
-                    end_date__gte=timezone.now()
-                )
-                # Áp dụng giảm giá
-                total = order.get_cart_total
-                discount = (total * promotion.discount_percent) / 100
-                total = total - discount
-                
-                # Lưu thông tin giảm giá vào đơn hàng
-                order.discount_amount = discount
-                order.final_total = total
-                order.promotion_code = promotion_code
-                order.save()
-                
-            except Promotion.DoesNotExist:
-                pass
-        
-        # ... continue with order processing ...
 
+    

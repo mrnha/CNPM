@@ -68,6 +68,23 @@
                             </div>
                         </div>
 
+                        <!-- Phần mã khuyến mãi -->
+                        <div class="promotion-code-section mb-3">
+                            <div class="input-group">
+                                <input type="text" id="promotion-code" class="form-control" 
+                                       placeholder="Nhập mã khuyến mãi">
+                                <button class="btn btn-primary" type="button" id="apply-promotion">
+                                    Áp dụng
+                                </button>
+                            </div>
+                            <div id="promotion-message" class="mt-2"></div>
+                            <small class="text-muted">
+                                <a href="{% url 'promotions' %}" target="_blank">
+                                    <i class="fas fa-gift"></i> Xem tất cả khuyến mãi
+                                </a>
+                            </small>
+                        </div>
+
                         <hr>
                         <input id="form-button" class="btn btn-success btn-block" type="submit" value="Đặt hàng">
                     </form>
@@ -81,17 +98,7 @@
                 <hr>
                 <h3>Tóm tắt đơn hàng</h3>
                 
-                <!-- Thêm phần mã khuyến mãi -->
-                <div class="promotion-code-section mb-3">
-                    <div class="input-group">
-                        <input type="text" id="promotion-code" class="form-control" 
-                               placeholder="Nhập mã khuyến mãi">
-                        <button class="btn btn-primary" type="button" id="apply-promotion">
-                            Áp dụng
-                        </button>
-                    </div>
-                    <div id="promotion-message" class="mt-2"></div>
-                </div>
+                
 
                 <div class="row bg-light py-2 mb-2 d-none d-md-flex">
                     <div style="flex:1; text-align:center;"><strong>Sản phẩm</strong></div>
@@ -182,16 +189,45 @@
 </style>
 
 <script>
+// Thêm code để tự động điền mã khuyến mãi
+document.addEventListener('DOMContentLoaded', function() {
+    const savedPromoCode = localStorage.getItem('selectedPromoCode');
+    if (savedPromoCode) {
+        const promoInput = document.getElementById('promotion-code');
+        promoInput.value = savedPromoCode;
+        // Tự động áp dụng mã
+        document.getElementById('apply-promotion').click();
+        // Xóa mã đã lưu
+        localStorage.removeItem('selectedPromoCode');
+    }
+});
+
+// Thêm CSRF token cho AJAX requests
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Cập nhật hàm xử lý áp dụng mã
 document.getElementById('apply-promotion').addEventListener('click', function() {
     const code = document.getElementById('promotion-code').value;
     const orderTotal = {{order.get_cart_total}};
     
-    // Gửi request kiểm tra mã
-    fetch('/check-promotion/', {
+    fetch('{% url "apply_promotion" %}', {  // Changed from apply-promotion to apply_promotion
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}'
+            'X-CSRFToken': getCookie('csrftoken')
         },
         body: JSON.stringify({
             code: code,
@@ -206,45 +242,46 @@ document.getElementById('apply-promotion').addEventListener('click', function() 
         const finalTotal = document.getElementById('final-total');
         
         if (data.valid) {
-            // Hiển thị thông báo thành công
             messageDiv.innerHTML = `<span class="promotion-success">
-                Áp dụng mã giảm ${data.discount_percent}% thành công!</span>`;
+                Áp dụng mã giảm ${data.discount_display} thành công!</span>`;
             
-            // Tính toán giảm giá
-            const discount = (orderTotal * data.discount_percent) / 100;
-            const finalAmount = orderTotal - discount;
-            
-            // Hiển thị giảm giá
             discountRow.style.display = 'flex';
-            discountAmount.textContent = `-${discount} VNĐ`;
-            finalTotal.textContent = `${finalAmount} VNĐ`;
+            discountAmount.textContent = `-${data.discount_amount_display}`;
+            finalTotal.textContent = data.final_total_display;
             
-            // Lưu mã khuyến mãi vào form checkout
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'promotion_code';
-            hiddenInput.value = code;
-            document.getElementById('checkout-form').appendChild(hiddenInput);
+            // Cập nhật form
+            updatePromotionInForm(code);
         } else {
-            // Hiển thị thông báo lỗi
             messageDiv.innerHTML = `<span class="promotion-error">${data.message}</span>`;
-            
-            // Reset hiển thị
-            discountRow.style.display = 'none';
-            finalTotal.textContent = `${orderTotal} VNĐ`;
-            
-            // Xóa mã khuyến mãi khỏi form nếu có
-            const existingPromoInput = document.querySelector('input[name="promotion_code"]');
-            if (existingPromoInput) {
-                existingPromoInput.remove();
-            }
+            resetPromotionDisplay();
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('promotion-message').innerHTML = 
-            '<span class="promotion-error">Có lỗi xảy ra, vui lòng thử lại sau.</span>';
     });
 });
+
+function updatePromotionInForm(code) {
+    let hiddenInput = document.querySelector('input[name="promotion_code"]');
+    if (!hiddenInput) {
+        hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'promotion_code';
+        document.getElementById('checkout-form').appendChild(hiddenInput);
+    }
+    hiddenInput.value = code;
+}
+
+function resetPromotionDisplay() {
+    const discountRow = document.getElementById('discount-row');
+    const finalTotal = document.getElementById('final-total');
+    const orderTotal = {{order.get_cart_total}};
+    
+    discountRow.style.display = 'none';
+    finalTotal.textContent = `${orderTotal} VNĐ`;
+    
+    // Xóa mã khuyến mãi khỏi form
+    const existingPromoInput = document.querySelector('input[name="promotion_code"]');
+    if (existingPromoInput) {
+        existingPromoInput.remove();
+    }
+}
 </script>
 {% endblock content_checkout %}

@@ -173,29 +173,106 @@ class BlogComment(models.Model):
         verbose_name_plural = "Bình luận"
         ordering = ['-created_date']
 
+def format_price(value):
+    """Helper function để format giá tiền"""
+    try:
+        return f"{int(value):,}₫"
+    except (ValueError, TypeError):
+        return "0₫"
+
 class Promotion(models.Model):
-    title = models.CharField(max_length=200, verbose_name="Tên chương trình", null=True, blank=True)
-    code = models.CharField(max_length=50, unique=True, verbose_name="Mã khuyến mãi")
-    description = models.TextField(verbose_name="Mô tả", null=True, blank=True)
-    discount_percent = models.IntegerField(verbose_name="Phần trăm giảm giá")
+    title = models.CharField(max_length=200, null=True, blank=True, verbose_name="Tên khuyến mãi")
+    code = models.CharField(max_length=20, unique=True, null=True, blank=True, verbose_name="Mã khuyến mãi")
+    banner_image = models.ImageField(upload_to='promotion_banners/', null=True, blank=True, verbose_name="Ảnh bìa")
+    card_image = models.ImageField(upload_to='promotion_cards/', null=True, blank=True, verbose_name="Ảnh thẻ khuyến mãi")
+    description = models.TextField(null=True, blank=True, verbose_name="Mô tả")
+    terms_conditions = models.TextField(null=True, blank=True, verbose_name="Điều kiện sử dụng")
+    
+    # Discount fields
+    discount_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('PERCENT', 'Giảm theo phần trăm'),
+            ('AMOUNT', 'Giảm theo số tiền'),
+        ],
+        verbose_name="Loại giảm giá"
+    )
+    discount_percent = models.FloatField(default=0, verbose_name="Phần trăm giảm")
+    discount_amount = models.FloatField(default=0, verbose_name="Số tiền giảm")
+    min_order_value = models.FloatField(default=0, verbose_name="Giá trị đơn hàng tối thiểu")
+    max_discount_amount = models.FloatField(null=True, blank=True, verbose_name="Số tiền giảm tối đa")
+    
+    # Time and usage limits
     start_date = models.DateTimeField(verbose_name="Ngày bắt đầu")
     end_date = models.DateTimeField(verbose_name="Ngày kết thúc")
+    usage_limit = models.IntegerField(default=0, verbose_name="Giới hạn sử dụng")
+    used_count = models.IntegerField(default=0, verbose_name="Số lần đã sử dụng")
     is_active = models.BooleanField(default=True, verbose_name="Còn hiệu lực")
-    min_order_value = models.FloatField(default=0, verbose_name="Giá trị đơn hàng tối thiểu")
-    image = models.ImageField(upload_to='promotions/', verbose_name="Ảnh khuyến mãi", null=True, blank=True)
-    
-    def __str__(self):
-        if self.title:
-            return f"{self.title} - Giảm {self.discount_percent}%"
-        return f"Mã {self.code} - Giảm {self.discount_percent}%"
     
     @property
-    def is_expired(self):
-        return timezone.now() > self.end_date
+    def is_valid(self):
+        now = timezone.now()
+        return (
+            self.is_active and
+            self.start_date <= now and
+            self.end_date >= now and
+            (self.usage_limit == 0 or self.used_count < self.usage_limit)
+        )
+    
+    @property
+    def discount_display(self):
+        if self.discount_type == 'PERCENT':
+            return f"{self.discount_percent:.1f}%"
+        return format_price(self.discount_amount)
+    
+    @property
+    def min_order_display(self):
+        return format_price(self.min_order_value)
+    
+    @property
+    def max_discount_display(self):
+        if self.max_discount_amount:
+            return format_price(self.max_discount_amount)
+        return None
+    
+    @property
+    def banner_url(self):
+        try:
+            return self.banner_image.url
+        except:
+            return '/static/images/default_promotion_banner.jpg'
+    
+    @property
+    def card_url(self):
+        try:
+            return self.card_image.url
+        except:
+            return '/static/images/default_promotion_card.jpg'
+    
+    @property
+    def usage_percent(self):
+        if self.usage_limit > 0:
+            return (self.used_count / self.usage_limit) * 100
+        return 0
+    
+    def __str__(self):
+        return f"{self.title} ({self.code})"
     
     class Meta:
-        verbose_name = "Mã khuyến mãi"
-        verbose_name_plural = "Mã khuyến mãi"
+        verbose_name = "Khuyến mãi"
+        verbose_name_plural = "Khuyến mãi"
         ordering = ['-start_date']
+
+class PromotionUsage(models.Model):
+    promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, related_name='usages')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    used_date = models.DateTimeField(auto_now_add=True)
+    discount_amount = models.FloatField()
+
+    class Meta:
+        verbose_name = "Lịch sử sử dụng khuyến mãi"
+        verbose_name_plural = "Lịch sử sử dụng khuyến mãi"
+        unique_together = ['promotion', 'order']
 
 

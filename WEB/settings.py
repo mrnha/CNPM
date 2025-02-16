@@ -78,13 +78,15 @@ WSGI_APPLICATION = 'WEB.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mssql',
         'NAME': 'DjangoDB',
-        'USER': 'root',
-        'PASSWORD': 'my-secret-pw',
+        'USER': 'sa',
+        'PASSWORD': '123456aA@$',
         'HOST': '127.0.0.1',
-        'PORT': '3306',
-        
+        'PORT': '1433',
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+    }
 }
 }
 # DATABASES = {
@@ -146,3 +148,5 @@ STATICFILES_DIRS = [
 ]
 MEDIA_URL= '/images/'
 MEDIA_ROOT=os.path.join(BASE_DIR, 'app/static/images')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

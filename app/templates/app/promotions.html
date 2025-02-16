@@ -1,44 +1,170 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block navbar %}
-    {% include 'app/navbar.html' with cartItems=cartItems %}
-{% endblock navbar %}
 
 {% block main-content %}
 <div class="container mt-4">
-    <h2 class="text-center mb-4">Chương Trình Khuyến Mãi</h2>
-    
-    <!-- Banner khuyến mãi -->
-    <div class="promotion-banner mb-5">
-        <img src="{% static 'app/images/banner/kmdb.jpg' %}" alt="Khuyến mãi đặc biệt" class="w-100">
-    </div>
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Khuyến mãi</li>
+        </ol>
+    </nav>
 
-    <!-- Danh sách khuyến mãi -->
-    <div class="row">
-        {% for promotion in promotions %}
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="promotion-card">
-                <div class="promotion-image">
-                    <span class="discount-badge">-{{ promotion.discount_percent }}%</span>
-                    <img src="{% static 'app/images/banner/b1.jpg' %}" alt="{{ promotion.title }}">
-                </div>
-                <div class="promotion-content">
-                    <h3>Mã khuyến mãi: {{ promotion.code }}</h3>
-                    <p class="promotion-period">
-                        Từ {{ promotion.start_date|date:"d/m/Y" }} - {{ promotion.end_date|date:"d/m/Y" }}
-                    </p>
-                    {% if promotion.min_order_value > 0 %}
-                    <p class="min-order">Áp dụng cho đơn hàng từ {{ promotion.min_order_value|floatformat:0 }}đ</p>
-                    {% endif %}
-                    <div class="promotion-code">
-                        <span>Mã: {{ promotion.code }}</span>
-                        <button class="copy-btn" onclick="copyCode('{{ promotion.code }}')">Sao chép</button>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-center mb-0">Chương Trình Khuyến Mãi</h2>
+        <a href="{% url 'home' %}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left"></i> Trở về trang chủ
+        </a>
+    </div>
+    
+    <!-- Banner Slider -->
+    <div class="promotion-banner-slider mb-4">
+        <div id="promotionBanners" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for promotion in featured_promotions %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ promotion.banner_url }}" class="d-block w-100" alt="{{ promotion.title }}">
+                    <div class="carousel-caption">
+                        <h3>{{ promotion.title }}</h3>
+                        <p>{{ promotion.description }}</p>
                     </div>
                 </div>
-                {% if not promotion.is_active %}
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#promotionBanners" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#promotionBanners" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="promotion-filters mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <select class="form-select" id="sortFilter">
+                    <option value="newest">Mới nhất</option>
+                    <option value="discount">Giảm giá cao nhất</option>
+                    <option value="expiring">Sắp hết hạn</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Tìm mã khuyến mãi..." id="searchPromo">
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" id="typeFilter">
+                    <option value="all">Tất cả loại giảm giá</option>
+                    <option value="PERCENT">Giảm theo %</option>
+                    <option value="AMOUNT">Giảm theo số tiền</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Promotion Cards -->
+    <div class="row" id="promotionsList">
+        {% for promotion in promotions %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="promotion-card {% if not promotion.is_valid %}expired{% endif %}">
+                {% if promotion.card_image %}
+                <div class="promotion-image">
+                    <img src="{{ promotion.card_url }}" alt="{{ promotion.title }}" class="card-img-top">
+                    <div class="discount-badge">
+                        {% if promotion.discount_type == 'PERCENT' %}
+                            <span>-{{ promotion.discount_percent|floatformat:1 }}%</span>
+                        {% else %}
+                            <span>-{{ promotion.discount_amount|floatformat:0}}₫</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="promotion-content">
+                    <h3>{{ promotion.title }}</h3>
+                    <div class="promotion-details">
+                        <p class="promotion-period">
+                            <i class="fas fa-clock"></i> 
+                            {{ promotion.start_date|date:"d/m/Y" }} - {{ promotion.end_date|date:"d/m/Y" }}
+                        </p>
+                        {% if promotion.min_order_value > 0 %}
+                        <p class="min-order">
+                            <i class="fas fa-tags"></i> 
+                            Đơn tối thiểu {{ promotion.min_order_value|floatformat:0 }}đ
+                        </p>
+                        {% endif %}
+                        {% if promotion.max_discount_amount %}
+                        <p class="max-discount">
+                            <i class="fas fa-gift"></i>
+                            Giảm tối đa {{ promotion.max_discount_amount|floatformat:0}}đ
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    {% if promotion.description %}
+                    <p class="promotion-description">{{ promotion.description }}</p>
+                    {% endif %}
+
+                    <div class="promotion-code">
+                        <span id="code-{{ promotion.id }}">{{ promotion.code }}</span>
+                        <div class="button-group">
+                            <button class="copy-btn" 
+                                    onclick="copyCode('{{ promotion.code }}', this)"
+                                    {% if not promotion.is_valid %}disabled{% endif %}>
+                                <i class="fas fa-copy"></i> Sao chép
+                            </button>
+                            <button class="use-btn" 
+                                    onclick="usePromotion('{{ promotion.code }}')"
+                                    {% if not promotion.is_valid %}disabled{% endif %}>
+                                <i class="fas fa-shopping-cart"></i> Sử dụng
+                            </button>
+                        </div>
+                    </div>
+
+                    {% if promotion.terms_conditions %}
+                    <div class="terms-conditions">
+                        <button class="btn btn-link" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#terms-{{ promotion.id }}">
+                            Xem điều kiện
+                        </button>
+                        <div class="collapse" id="terms-{{ promotion.id }}">
+                            <div class="card card-body">
+                                {{ promotion.terms_conditions|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if promotion.usage_limit > 0 %}
+                    <div class="usage-count mt-2">
+                        <small>Đã dùng: {{ promotion.used_count }}/{{ promotion.usage_limit }}</small>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ promotion.usage_percent|floatformat:1 }}%">
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if not promotion.is_valid %}
                 <div class="expired-overlay">
-                    <span>Đã hết hạn</span>
+                    <span>
+                        {% if promotion.is_expired %}
+                            Đã hết hạn
+                        {% elif not promotion.is_started %}
+                            Chưa bắt đầu
+                        {% elif promotion.used_count >= promotion.usage_limit %}
+                            Đã hết lượt dùng
+                        {% else %}
+                            Không khả dụng
+                        {% endif %}
+                    </span>
                 </div>
                 {% endif %}
             </div>
@@ -52,158 +178,237 @@
 </div>
 
 <style>
-    .promotion-card {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-        overflow: hidden;
-        transition: transform 0.3s ease;
-        position: relative;
-    }
+.promotion-banner-slider {
+    margin-bottom: 30px;
+}
 
-    .promotion-card:hover {
-        transform: translateY(-5px);
-    }
+.promotion-banner-slider img {
+    height: 300px;
+    object-fit: cover;
+}
 
-    .promotion-image {
-        position: relative;
-        height: 200px;
-        overflow: hidden;
-    }
+.promotion-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    background: white;
+    position: relative;
+}
 
-    .promotion-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+.promotion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
 
-    .discount-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: #ff4444;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-weight: bold;
-    }
+.promotion-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
 
-    .promotion-content {
-        padding: 20px;
-    }
+.promotion-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-    .promotion-content h3 {
-        color: #333;
-        font-size: 1.2rem;
-        margin-bottom: 10px;
-        font-weight: 600;
-    }
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff4757;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
 
-    .promotion-period {
-        color: #666;
-        font-size: 0.9rem;
-        margin-bottom: 10px;
-    }
+.promotion-content {
+    padding: 20px;
+}
 
-    .promotion-description {
-        color: #444;
-        margin-bottom: 15px;
-        line-height: 1.4;
-    }
+.promotion-details {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 10px 0;
+}
 
-    .min-order {
-        color: #28a745;
-        font-size: 0.9rem;
-        margin-bottom: 15px;
-        font-weight: 500;
-    }
+.promotion-code {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 15px 0;
+}
 
-    .promotion-code {
-        background: #f8f9fa;
-        padding: 10px;
-        border-radius: 5px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+.copy-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
 
-    .promotion-code span {
-        font-family: monospace;
-        font-weight: bold;
-        color: #666;
-    }
+.copy-btn:hover {
+    background: #0056b3;
+}
 
-    .copy-btn {
-        background: #007bff;
-        color: white;
-        border: none;
-        padding: 5px 15px;
-        border-radius: 3px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-    }
+.copy-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
 
-    .copy-btn:hover {
-        background: #0056b3;
-    }
+.terms-conditions {
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
 
-    .expired-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+.expired-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
 
-    .expired-overlay span {
-        color: white;
-        font-size: 1.5rem;
-        font-weight: bold;
-        padding: 10px 20px;
-        background: #dc3545;
-        border-radius: 5px;
-    }
+.breadcrumb {
+    background-color: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+}
 
-    @media (max-width: 768px) {
-        .promotion-card {
-            margin-bottom: 20px;
-        }
-    }
+.breadcrumb-item a {
+    color: #007bff;
+    text-decoration: none;
+}
 
-    /* Animation cho copy button */
-    .copy-btn.copied {
-        background: #28a745;
-    }
+.breadcrumb-item.active {
+    color: #6c757d;
+}
 
-    @keyframes copiedAnimation {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.2); }
-        100% { transform: scale(1); }
-    }
+.btn-outline-primary {
+    border-color: #007bff;
+    color: #007bff;
+    transition: all 0.3s;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.use-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.use-btn:hover {
+    background: #218838;
+}
+
+.use-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
 </style>
 
 <script>
-    function copyCode(code) {
-        navigator.clipboard.writeText(code).then(function() {
-            const btn = event.target;
-            btn.classList.add('copied');
-            btn.textContent = 'Đã sao chép';
-            btn.style.animation = 'copiedAnimation 0.3s ease';
-            
-            setTimeout(() => {
-                btn.classList.remove('copied');
-                btn.textContent = 'Sao chép';
-                btn.style.animation = '';
-            }, 2000);
-        }, function(err) {
-            console.error('Không thể sao chép mã: ', err);
-            alert('Không thể sao chép mã. Vui lòng thử lại.');
-        });
-    }
-</script>
+function copyCode(code, button) {
+    navigator.clipboard.writeText(code).then(function() {
+        button.classList.add('copied');
+        const originalText = button.textContent;
+        button.textContent = 'Đã sao chép';
+        button.style.animation = 'copiedAnimation 0.3s ease';
+        
+        setTimeout(() => {
+            button.classList.remove('copied');
+            button.textContent = originalText;
+            button.style.animation = '';
+        }, 2000);
+    }).catch(function(err) {
+        console.error('Không thể sao chép mã: ', err);
+        alert('Không thể sao chép mã. Vui lòng thử lại.');
+    });
+}
 
-{% endblock main-content %} 
+// Xử lý tìm kiếm và lọc
+document.getElementById('searchPromo').addEventListener('input', function(e) {
+    const searchText = e.target.value.toLowerCase();
+    filterPromotions(searchText);
+});
+
+document.getElementById('sortFilter').addEventListener('change', function(e) {
+    const sortValue = e.target.value;
+    sortPromotions(sortValue);
+});
+
+function filterPromotions(searchText) {
+    const cards = document.querySelectorAll('.promotion-card');
+    cards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const code = card.querySelector('.promotion-code span').textContent.toLowerCase();
+        if (title.includes(searchText) || code.includes(searchText)) {
+            card.closest('.col-md-6').style.display = '';
+        } else {
+            card.closest('.col-md-6').style.display = 'none';
+        }
+    });
+}
+
+function sortPromotions(sortType) {
+    const container = document.getElementById('promotionsList');
+    const cards = Array.from(container.children);
+    
+    cards.sort((a, b) => {
+        if (sortType === 'discount') {
+            const discountA = parseInt(a.querySelector('.discount-badge').textContent);
+            const discountB = parseInt(b.querySelector('.discount-badge').textContent);
+            return discountB - discountA;
+        } else if (sortType === 'newest') {
+            const dateA = new Date(a.querySelector('.promotion-period').textContent.match(/\d+\/\d+\/\d+/));
+            const dateB = new Date(b.querySelector('.promotion-period').textContent.match(/\d+\/\d+\/\d+/));
+            return dateB - dateA;
+        } else if (sortType === 'expiring') {
+            const dateA = new Date(a.querySelector('.promotion-period').textContent.match(/\d+\/\d+\/\d+/));
+            const dateB = new Date(b.querySelector('.promotion-period').textContent.match(/\d+\/\d+\/\d+/));
+            const daysA = (dateB - dateA) / (1000 * 60 * 60 * 24);
+            const daysB = (dateB - dateA) / (1000 * 60 * 60 * 24);
+            return daysA - daysB;
+        }
+    });
+    
+    container.innerHTML = '';
+    cards.forEach(card => container.appendChild(card));
+}
+
+// Thêm hàm usePromotion
+function usePromotion(code) {
+    // Lưu mã vào localStorage
+    localStorage.setItem('selectedPromoCode', code);
+    // Chuyển hướng đến trang checkout
+    window.location.href = "{% url 'checkout' %}";
+}
+</script>
+{% endblock %}

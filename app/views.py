@@ -17,10 +17,11 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_protect
 from .models import *
+from django.utils import timezone
+import json
 
 
 from .models import *
-import json
 def index (request):
     return render(request, 'app/index.html')
 # Create your views here.
@@ -511,49 +512,143 @@ def get_context_data(request):
     return context
 
 def blog_detail(request, blog_id):
-    # Tạo dictionary chứa dữ liệu blog (tạm thời hard-code)
-    blogs = {
-        1: {
-            'title': 'Uống Sữa Trong Thời Gian Nào Là Tốt Nhất Cho Sức Khoẻ?',
-            'content': 'Nội dung chi tiết về thời gian uống sữa...',
-            'image': 'https://bizweb.dktcdn.net/100/416/540/articles/uong-sua-trong-thoi-gian-nao-la-tot-nhat-cho-suc-khoe.jpg?v=1737012850827',
-            'date': '03/02/2024',
-            'author': 'ADMIN CHICKENMILK'
-        },
-        2: {
-            'title': 'Tại Sao Dân Văn Phòng Nên Bổ Sung Sữa Hằng Ngày?',
-            'content': 'Nội dung chi tiết về bổ sung sữa cho dân văn phòng...',
-            'image': 'https://bizweb.dktcdn.net/100/416/540/articles/tai-sao-dan-van-phong-nen-bo-sung-sua.jpg?v=1736494525510',
-            'date': '09/01/2024',
-            'author': 'ADMIN CHICKENMILK'
-        },
-        3: {
-            'title': 'Top 5 Cách Tiệt Trùng Bình Sữa An Toàn, Dễ Thực Hiện',
-            'content': 'Nội dung chi tiết về cách tiệt trùng bình sữa...',
-            'image': 'https://bizweb.dktcdn.net/100/416/540/articles/top-5-cach-tiet-trung-binh-sua-an-toan.jpg?v=1735639320553',
-            'date': '31/12/2023',
-            'author': 'ADMIN CHICKENMILK'
-        }
-    }
-    
-    blog = blogs.get(blog_id)
-    if not blog:
-        return redirect('home')  # Redirect về trang chủ nếu không tìm thấy blog
+    try:
+        blog = Blog.objects.get(id=blog_id, is_active=True)
+        # Tăng lượt xem
+        blog.views += 1
+        blog.save()
         
-    context = {'blog': blog}
-    return render(request, 'app/blog_detail.html', context)
+        # Lấy các bài viết liên quan
+        related_blogs = Blog.objects.filter(
+            category=blog.category,
+            is_active=True
+        ).exclude(id=blog_id)[:3]
+        
+        # Lấy comments
+        comments = blog.comments.filter(is_active=True)
+        
+        # Xử lý comment mới
+        if request.method == 'POST' and request.user.is_authenticated:
+            content = request.POST.get('content')
+            if content:
+                BlogComment.objects.create(
+                    blog=blog,
+                    user=request.user,
+                    content=content
+                )
+                messages.success(request, 'Bình luận của bạn đã được gửi thành công!')
+                return redirect('blog_detail', blog_id=blog_id)
+        
+        # Lấy thông tin giỏ hàng
+        if request.user.is_authenticated:
+            customer = request.user
+            order, created = Order.objects.get_or_create(Customer=customer, complete=False)
+            cartItems = order.get_cart_items
+        else:
+            order = {'get_cart_total': 0, 'get_cart_items': 0}
+            cartItems = order['get_cart_items']
+        
+        context = {
+            'blog': blog,
+            'related_blogs': related_blogs,
+            'comments': comments,
+            'cartItems': cartItems
+        }
+        return render(request, 'app/blog_detail.html', context)
+    
+    except Blog.DoesNotExist:
+        messages.error(request, 'Không tìm thấy bài viết này!')
+        return redirect('home')
 
 def promotions(request):
+    # Chỉ lấy các trường đã tồn tại trong database
+    promotions = Promotion.objects.filter(
+        is_active=True,
+        start_date__lte=timezone.now(),
+        end_date__gte=timezone.now()
+    ).values(
+        'code',
+        'discount_percent',
+        'start_date',
+        'end_date',
+        'is_active',
+        'min_order_value'
+    )
+    
     if request.user.is_authenticated:
         customer = request.user
         order, created = Order.objects.get_or_create(Customer=customer, complete=False)
-        items = order.orderitem_set.all()
         cartItems = order.get_cart_items
     else:
-        items = []
         order = {'get_cart_total': 0, 'get_cart_items': 0}
         cartItems = order['get_cart_items']
     
-    context = {'cartItems': cartItems}
+    context = {
+        'promotions': promotions,
+        'cartItems': cartItems
+    }
     return render(request, 'app/promotions.html', context)
+
+@require_POST
+def check_promotion(request):
+    data = json.loads(request.body)
+    code = data.get('code')
+    order_total = data.get('order_total')
+    
+    try:
+        promotion = Promotion.objects.get(
+            code=code,
+            is_active=True,
+            start_date__lte=timezone.now(),
+            end_date__gte=timezone.now()
+        )
+        
+        if order_total < promotion.min_order_value:
+            return JsonResponse({
+                'valid': False,
+                'message': f'Mã giảm giá chỉ áp dụng cho đơn hàng từ {promotion.min_order_value} VNĐ'
+            })
+        
+        return JsonResponse({
+            'valid': True,
+            'discount_percent': promotion.discount_percent
+        })
+        
+    except Promotion.DoesNotExist:
+        return JsonResponse({
+            'valid': False,
+            'message': 'Mã khuyến mãi không hợp lệ hoặc đã hết hạn'
+        })
+
+# Cập nhật hàm process_order để xử lý mã khuyến mãi
+@login_required
+def process_order(request):
+    if request.method == 'POST':
+        # ... existing code ...
+        
+        # Xử lý mã khuyến mãi nếu có
+        promotion_code = request.POST.get('promotion_code')
+        if promotion_code:
+            try:
+                promotion = Promotion.objects.get(
+                    code=promotion_code,
+                    is_active=True,
+                    start_date__lte=timezone.now(),
+                    end_date__gte=timezone.now()
+                )
+                # Áp dụng giảm giá
+                total = order.get_cart_total
+                discount = (total * promotion.discount_percent) / 100
+                total = total - discount
+                
+                # Lưu thông tin giảm giá vào đơn hàng
+                order.discount_amount = discount
+                order.final_total = total
+                order.promotion_code = promotion_code
+                order.save()
+                
+            except Promotion.DoesNotExist:
+                pass
+        
+        # ... continue with order processing ...
 

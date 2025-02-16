@@ -80,6 +80,19 @@
                 <a class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Trở lại giỏ hàng</a>
                 <hr>
                 <h3>Tóm tắt đơn hàng</h3>
+                
+                <!-- Thêm phần mã khuyến mãi -->
+                <div class="promotion-code-section mb-3">
+                    <div class="input-group">
+                        <input type="text" id="promotion-code" class="form-control" 
+                               placeholder="Nhập mã khuyến mãi">
+                        <button class="btn btn-primary" type="button" id="apply-promotion">
+                            Áp dụng
+                        </button>
+                    </div>
+                    <div id="promotion-message" class="mt-2"></div>
+                </div>
+
                 <div class="row bg-light py-2 mb-2 d-none d-md-flex">
                     <div style="flex:1; text-align:center;"><strong>Sản phẩm</strong></div>
                     <div style="flex:1; text-align:center;"><strong>Tên sản phẩm</strong></div>
@@ -96,7 +109,23 @@
                 </div>
                 {%endfor%}
                 <h5>Số món:   {{order.get_cart_items}}</h5>
-                <h5>Số tiền:   {{order.get_cart_total}} VNĐ</h5>
+                
+                <!-- Cập nhật phần tổng tiền -->
+                <div class="order-summary mt-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tạm tính:</span>
+                        <span>{{order.get_cart_total}} VNĐ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2" id="discount-row" style="display: none !important;">
+                        <span>Giảm giá:</span>
+                        <span id="discount-amount">0 VNĐ</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong>Tổng cộng:</strong>
+                        <strong id="final-total">{{order.get_cart_total}} VNĐ</strong>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -124,5 +153,98 @@
     textarea {
         resize: vertical;
     }
+    
+    .promotion-code-section {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+    }
+    
+    #promotion-message {
+        font-size: 0.9rem;
+    }
+    
+    .promotion-success {
+        color: #28a745;
+    }
+    
+    .promotion-error {
+        color: #dc3545;
+    }
+    
+    .order-summary {
+        font-size: 1.1rem;
+    }
+    
+    #discount-row {
+        color: #28a745;
+    }
 </style>
+
+<script>
+document.getElementById('apply-promotion').addEventListener('click', function() {
+    const code = document.getElementById('promotion-code').value;
+    const orderTotal = {{order.get_cart_total}};
+    
+    // Gửi request kiểm tra mã
+    fetch('/check-promotion/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            code: code,
+            order_total: orderTotal
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageDiv = document.getElementById('promotion-message');
+        const discountRow = document.getElementById('discount-row');
+        const discountAmount = document.getElementById('discount-amount');
+        const finalTotal = document.getElementById('final-total');
+        
+        if (data.valid) {
+            // Hiển thị thông báo thành công
+            messageDiv.innerHTML = `<span class="promotion-success">
+                Áp dụng mã giảm ${data.discount_percent}% thành công!</span>`;
+            
+            // Tính toán giảm giá
+            const discount = (orderTotal * data.discount_percent) / 100;
+            const finalAmount = orderTotal - discount;
+            
+            // Hiển thị giảm giá
+            discountRow.style.display = 'flex';
+            discountAmount.textContent = `-${discount} VNĐ`;
+            finalTotal.textContent = `${finalAmount} VNĐ`;
+            
+            // Lưu mã khuyến mãi vào form checkout
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'promotion_code';
+            hiddenInput.value = code;
+            document.getElementById('checkout-form').appendChild(hiddenInput);
+        } else {
+            // Hiển thị thông báo lỗi
+            messageDiv.innerHTML = `<span class="promotion-error">${data.message}</span>`;
+            
+            // Reset hiển thị
+            discountRow.style.display = 'none';
+            finalTotal.textContent = `${orderTotal} VNĐ`;
+            
+            // Xóa mã khuyến mãi khỏi form nếu có
+            const existingPromoInput = document.querySelector('input[name="promotion_code"]');
+            if (existingPromoInput) {
+                existingPromoInput.remove();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('promotion-message').innerHTML = 
+            '<span class="promotion-error">Có lỗi xảy ra, vui lòng thử lại sau.</span>';
+    });
+});
+</script>
 {% endblock content_checkout %}

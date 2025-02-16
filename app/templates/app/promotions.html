@@ -16,62 +16,38 @@
 
     <!-- Danh sách khuyến mãi -->
     <div class="row">
-        <!-- Khuyến mãi 1 -->
+        {% for promotion in promotions %}
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="promotion-card">
                 <div class="promotion-image">
-                    <span class="discount-badge">-30%</span>
-                    <img src="{% static 'app/images/banner/b1.jpg' %}" alt="Khuyến mãi 1">
+                    <span class="discount-badge">-{{ promotion.discount_percent }}%</span>
+                    <img src="{% static 'app/images/banner/b1.jpg' %}" alt="{{ promotion.title }}">
                 </div>
                 <div class="promotion-content">
-                    <h3>Siêu Sale Tết Rồng Vàng</h3>
-                    <p class="promotion-period">Từ 25/01 - 10/02/2024</p>
-                    <p class="promotion-description">Giảm giá đến 30% cho tất cả các sản phẩm sữa bột và tã bỉm</p>
+                    <h3>Mã khuyến mãi: {{ promotion.code }}</h3>
+                    <p class="promotion-period">
+                        Từ {{ promotion.start_date|date:"d/m/Y" }} - {{ promotion.end_date|date:"d/m/Y" }}
+                    </p>
+                    {% if promotion.min_order_value > 0 %}
+                    <p class="min-order">Áp dụng cho đơn hàng từ {{ promotion.min_order_value|floatformat:0 }}đ</p>
+                    {% endif %}
                     <div class="promotion-code">
-                        <span>Mã: TETRONGVANG</span>
-                        <button class="copy-btn" onclick="copyCode('TETRONGVANG')">Sao chép</button>
+                        <span>Mã: {{ promotion.code }}</span>
+                        <button class="copy-btn" onclick="copyCode('{{ promotion.code }}')">Sao chép</button>
                     </div>
                 </div>
+                {% if not promotion.is_active %}
+                <div class="expired-overlay">
+                    <span>Đã hết hạn</span>
+                </div>
+                {% endif %}
             </div>
         </div>
-
-        <!-- Khuyến mãi 2 -->
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="promotion-card">
-                <div class="promotion-image">
-                    <span class="discount-badge">-50%</span>
-                    <img src="{% static 'app/images/banner/b2.jpg' %}" alt="Khuyến mãi 2">
-                </div>
-                <div class="promotion-content">
-                    <h3>Flash Sale Cuối Tuần</h3>
-                    <p class="promotion-period">Mỗi Thứ 7 & Chủ Nhật</p>
-                    <p class="promotion-description">Giảm sốc 50% cho đơn hàng từ 1.000.000đ</p>
-                    <div class="promotion-code">
-                        <span>Mã: WEEKEND50</span>
-                        <button class="copy-btn" onclick="copyCode('WEEKEND50')">Sao chép</button>
-                    </div>
-                </div>
-            </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p>Hiện chưa có chương trình khuyến mãi nào.</p>
         </div>
-
-        <!-- Khuyến mãi 3 -->
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="promotion-card">
-                <div class="promotion-image">
-                    <span class="discount-badge">Quà</span>
-                    <img src="{% static 'app/images/banner/b3.jpg' %}" alt="Khuyến mãi 3">
-                </div>
-                <div class="promotion-content">
-                    <h3>Mua Sữa Tặng Quà</h3>
-                    <p class="promotion-period">Đến hết 29/02/2024</p>
-                    <p class="promotion-description">Tặng bình sữa cao cấp cho đơn hàng từ 500.000đ</p>
-                    <div class="promotion-code">
-                        <span>Mã: QUATANG</span>
-                        <button class="copy-btn" onclick="copyCode('QUATANG')">Sao chép</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 
@@ -82,6 +58,7 @@
         box-shadow: 0 2px 15px rgba(0,0,0,0.1);
         overflow: hidden;
         transition: transform 0.3s ease;
+        position: relative;
     }
 
     .promotion-card:hover {
@@ -119,6 +96,7 @@
         color: #333;
         font-size: 1.2rem;
         margin-bottom: 10px;
+        font-weight: 600;
     }
 
     .promotion-period {
@@ -131,6 +109,13 @@
         color: #444;
         margin-bottom: 15px;
         line-height: 1.4;
+    }
+
+    .min-order {
+        color: #28a745;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        font-weight: 500;
     }
 
     .promotion-code {
@@ -162,19 +147,61 @@
         background: #0056b3;
     }
 
+    .expired-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .expired-overlay span {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 10px 20px;
+        background: #dc3545;
+        border-radius: 5px;
+    }
+
     @media (max-width: 768px) {
         .promotion-card {
             margin-bottom: 20px;
         }
+    }
+
+    /* Animation cho copy button */
+    .copy-btn.copied {
+        background: #28a745;
+    }
+
+    @keyframes copiedAnimation {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
     }
 </style>
 
 <script>
     function copyCode(code) {
         navigator.clipboard.writeText(code).then(function() {
-            alert('Đã sao chép mã: ' + code);
+            const btn = event.target;
+            btn.classList.add('copied');
+            btn.textContent = 'Đã sao chép';
+            btn.style.animation = 'copiedAnimation 0.3s ease';
+            
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.textContent = 'Sao chép';
+                btn.style.animation = '';
+            }, 2000);
         }, function(err) {
             console.error('Không thể sao chép mã: ', err);
+            alert('Không thể sao chép mã. Vui lòng thử lại.');
         });
     }
 </script>

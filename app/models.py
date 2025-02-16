@@ -1,6 +1,7 @@
 from django.db import models # type: ignore
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.utils import timezone
 
 # Create your models here.
 
@@ -117,5 +118,84 @@ class CustomerProfile(models.Model):
         verbose_name = "Hồ sơ khách hàng"
         verbose_name_plural = "Hồ sơ khách hàng"
     
+
+class BlogCategory(models.Model):
+    name = models.CharField(max_length=200, verbose_name="Tên danh mục")
+    slug = models.SlugField(max_length=200, unique=True)
+    
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Danh mục bài viết"
+        verbose_name_plural = "Danh mục bài viết"
+
+class Blog(models.Model):
+    category = models.ForeignKey(BlogCategory, on_delete=models.SET_NULL, null=True, related_name='blogs')
+    title = models.CharField(max_length=300, verbose_name="Tiêu đề")
+    slug = models.SlugField(max_length=300, unique=True)
+    content = models.TextField(verbose_name="Nội dung")
+    image = models.ImageField(upload_to='blog_images/', verbose_name="Ảnh bìa")
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="Tác giả")
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tạo")
+    updated_date = models.DateTimeField(auto_now=True, verbose_name="Ngày cập nhật")
+    views = models.IntegerField(default=0, verbose_name="Lượt xem")
+    is_active = models.BooleanField(default=True, verbose_name="Hiển thị")
+    
+    def __str__(self):
+        return self.title
+    
+    @property
+    def ImageURL(self):
+        try:
+            url = self.image.url
+        except:
+            url = ''
+        return url
+    
+    class Meta:
+        verbose_name = "Bài viết"
+        verbose_name_plural = "Bài viết"
+        ordering = ['-created_date']
+
+class BlogComment(models.Model):
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField(verbose_name="Nội dung bình luận")
+    created_date = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return f'Bình luận bởi {self.user.username} trên {self.blog.title}'
+    
+    class Meta:
+        verbose_name = "Bình luận"
+        verbose_name_plural = "Bình luận"
+        ordering = ['-created_date']
+
+class Promotion(models.Model):
+    title = models.CharField(max_length=200, verbose_name="Tên chương trình", null=True, blank=True)
+    code = models.CharField(max_length=50, unique=True, verbose_name="Mã khuyến mãi")
+    description = models.TextField(verbose_name="Mô tả", null=True, blank=True)
+    discount_percent = models.IntegerField(verbose_name="Phần trăm giảm giá")
+    start_date = models.DateTimeField(verbose_name="Ngày bắt đầu")
+    end_date = models.DateTimeField(verbose_name="Ngày kết thúc")
+    is_active = models.BooleanField(default=True, verbose_name="Còn hiệu lực")
+    min_order_value = models.FloatField(default=0, verbose_name="Giá trị đơn hàng tối thiểu")
+    image = models.ImageField(upload_to='promotions/', verbose_name="Ảnh khuyến mãi", null=True, blank=True)
+    
+    def __str__(self):
+        if self.title:
+            return f"{self.title} - Giảm {self.discount_percent}%"
+        return f"Mã {self.code} - Giảm {self.discount_percent}%"
+    
+    @property
+    def is_expired(self):
+        return timezone.now() > self.end_date
+    
+    class Meta:
+        verbose_name = "Mã khuyến mãi"
+        verbose_name_plural = "Mã khuyến mãi"
+        ordering = ['-start_date']
 
 

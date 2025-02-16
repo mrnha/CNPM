@@ -4,56 +4,364 @@
 {% block main-content %}
 <div class="container mt-5">
     <div class="row">
-        <div class="col-lg-8 mx-auto">
+        <!-- Bài viết chính -->
+        <div class="col-lg-8">
             <article class="blog-post">
-                <h1 class="blog-title mb-4">{{ blog.title }}</h1>
+                <h1 class="blog-title mb-3">{{ blog.title }}</h1>
                 
                 <div class="blog-meta mb-4">
-                    <span class="date"><i class="far fa-calendar-alt"></i> {{ blog.date }}</span>
-                    <span class="author"><i class="far fa-user"></i> {{ blog.author }}</span>
+                    <span class="date"><i class="far fa-calendar-alt"></i> {{ blog.created_date|date:"d/m/Y" }}</span>
+                    <span class="author"><i class="far fa-user"></i> {{ blog.author.get_full_name|default:blog.author.username }}</span>
+                    <span class="category"><i class="far fa-folder"></i> {{ blog.category.name }}</span>
+                    <span class="views"><i class="far fa-eye"></i> {{ blog.views }} lượt xem</span>
                 </div>
                 
                 <div class="blog-image mb-4">
-                    <img src="{{ blog.image }}" alt="{{ blog.title }}" class="img-fluid">
+                    <img src="{{ blog.ImageURL }}" alt="{{ blog.title }}" class="img-fluid rounded">
                 </div>
                 
-                <div class="blog-content">
-                    {{ blog.content|linebreaks }}
+                <div class="blog-content mb-5">
+                    {{ blog.content|safe }}
+                </div>
+
+                <!-- Phần bình luận -->
+                <div class="comments-section">
+                    <h3 class="mb-4">Bình luận ({{ comments.count }})</h3>
+                    
+                    {% if user.is_authenticated %}
+                    <div class="comment-form mb-5">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <textarea class="form-control" name="content" rows="3" 
+                                          placeholder="Viết bình luận của bạn..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-2">Gửi bình luận</button>
+                        </form>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Vui lòng <a href="{% url 'login' %}">đăng nhập</a> để bình luận.
+                    </div>
+                    {% endif %}
+
+                    <!-- Danh sách bình luận -->
+                    <div class="comments-list">
+                        {% for comment in comments %}
+                        <div class="comment-item mb-4">
+                            <div class="comment-meta">
+                                <strong>{{ comment.user.get_full_name|default:comment.user.username }}</strong>
+                                <span class="text-muted ml-2">
+                                    {{ comment.created_date|date:"d/m/Y H:i" }}
+                                </span>
+                            </div>
+                            <div class="comment-content mt-2">
+                                {{ comment.content }}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">Chưa có bình luận nào.</p>
+                        {% endfor %}
+                    </div>
                 </div>
             </article>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Bài viết liên quan -->
+            <div class="related-posts mb-4">
+                <h3 class="sidebar-title mb-3">Bài viết liên quan</h3>
+                {% for related in related_blogs %}
+                <div class="related-post-item mb-3">
+                    <div class="row g-0">
+                        <div class="col-4">
+                            <img src="{{ related.ImageURL }}" alt="{{ related.title }}" 
+                                 class="img-fluid rounded">
+                        </div>
+                        <div class="col-8 ps-3">
+                            <h5 class="mb-1">
+                                <a href="{% url 'blog_detail' related.id %}" class="text-decoration-none">
+                                    {{ related.title|truncatechars:50 }}
+                                </a>
+                            </h5>
+                            <div class="small text-muted">
+                                {{ related.created_date|date:"d/m/Y" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">Không có bài viết liên quan.</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
 
 <style>
+    /* Typography */
     .blog-post {
         background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+        font-family: 'Roboto', sans-serif;
     }
     
     .blog-title {
-        color: #333;
-        font-weight: 700;
+        color: #2c3e50;
+        font-weight: 800;
+        font-size: 2.8rem;
+        line-height: 1.3;
+        margin-bottom: 1.5rem;
+        font-family: 'Playfair Display', serif;
     }
     
+    /* Meta Information */
     .blog-meta {
-        color: #666;
+        color: #7f8c8d;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1.5rem;
+        margin-bottom: 2rem;
     }
     
     .blog-meta span {
-        margin-right: 20px;
+        margin-right: 25px;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
     }
     
     .blog-meta i {
-        margin-right: 5px;
+        margin-right: 8px;
+        color: #3498db;
+        font-size: 1.1rem;
     }
     
+    /* Main Content */
     .blog-content {
+        font-size: 1.15rem;
+        line-height: 1.9;
+        color: #34495e;
+    }
+    
+    .blog-content h2 {
+        color: #2c3e50;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 2.5rem 0 1.5rem;
+        font-family: 'Playfair Display', serif;
+    }
+    
+    .blog-content h3 {
+        color: #34495e;
+        font-size: 1.6rem;
+        font-weight: 600;
+        margin: 2rem 0 1.2rem;
+        font-family: 'Playfair Display', serif;
+    }
+    
+    .blog-content p {
+        margin-bottom: 1.8rem;
+        text-align: justify;
+    }
+    
+    .blog-content ul {
+        margin: 1.5rem 0 2rem 1.5rem;
+        padding-left: 1rem;
+    }
+    
+    .blog-content ul li {
+        margin-bottom: 0.8rem;
+        position: relative;
+    }
+    
+    .blog-content img {
+        border-radius: 8px;
+        margin: 2rem 0;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+    }
+    
+    /* Sidebar */
+    .sidebar-title {
+        color: #2c3e50;
+        font-size: 1.5rem;
+        font-weight: 700;
+        padding-bottom: 12px;
+        border-bottom: 3px solid #3498db;
+        margin-bottom: 1.5rem;
+        font-family: 'Playfair Display', serif;
+    }
+    
+    .related-post-item {
+        transition: all 0.3s ease;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 1.2rem;
+    }
+    
+    .related-post-item:hover {
+        transform: translateX(8px);
+        background: #f8f9fa;
+    }
+    
+    .related-post-item h5 {
         font-size: 1.1rem;
-        line-height: 1.8;
-        color: #444;
+        line-height: 1.5;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .related-post-item a {
+        color: #2c3e50;
+        text-decoration: none;
+    }
+    
+    .related-post-item a:hover {
+        color: #3498db;
+    }
+    
+    /* Comments Section */
+    .comments-section {
+        margin-top: 50px;
+        padding-top: 40px;
+        border-top: 2px solid #eee;
+    }
+    
+    .comments-section h3 {
+        color: #2c3e50;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        font-family: 'Playfair Display', serif;
+    }
+    
+    .comment-item {
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        border-left: 4px solid #3498db;
+        margin-bottom: 1.5rem;
+    }
+    
+    .comment-meta {
+        font-size: 0.95rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .comment-meta strong {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+    
+    .comment-content {
+        color: #34495e;
+        font-size: 1.05rem;
+        line-height: 1.6;
+    }
+    
+    .comment-form textarea {
+        border-radius: 12px;
+        resize: none;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
+    
+    .comment-form textarea:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52,152,219,0.25);
+    }
+    
+    .comment-form .btn-primary {
+        padding: 10px 30px;
+        font-weight: 600;
+        border-radius: 8px;
+        background-color: #3498db;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .comment-form .btn-primary:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+    }
+    
+    /* Alert Styles */
+    .alert-info {
+        background-color: #e1f0fa;
+        border-color: #3498db;
+        color: #2c3e50;
+        border-radius: 8px;
+        padding: 15px 20px;
+    }
+    
+    .alert-info a {
+        color: #3498db;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    
+    .alert-info a:hover {
+        text-decoration: underline;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .blog-post {
+            padding: 30px;
+        }
+        
+        .blog-title {
+            font-size: 2.3rem;
+        }
+        
+        .blog-content {
+            font-size: 1.1rem;
+        }
+        
+        .blog-content h2 {
+            font-size: 1.8rem;
+        }
+        
+        .blog-content h3 {
+            font-size: 1.4rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .blog-post {
+            padding: 20px;
+        }
+        
+        .blog-title {
+            font-size: 2rem;
+        }
+        
+        .blog-meta span {
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .blog-content {
+            font-size: 1.05rem;
+        }
+        
+        .blog-content h2 {
+            font-size: 1.6rem;
+        }
+        
+        .blog-content h3 {
+            font-size: 1.3rem;
+        }
+        
+        .comments-section h3 {
+            font-size: 1.5rem;
+        }
     }
 </style>
+
+<!-- Add Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 {% endblock %} 

@@ -22,4 +22,5 @@ urlpatterns = [
  path('account/update-avatar/', views.update_avatar, name='update_avatar'),
  path('blog/<int:blog_id>/', views.blog_detail, name='blog_detail'),
  path('promotions/', views.promotions, name='promotions'),
+ path('check-promotion/', views.check_promotion, name='check_promotion'),
 ]

@@ -186,7 +186,7 @@
       <!-- Main Navigation -->
       <ul class="main-nav">
         <li><a href="{% url 'home' %}">Trang Chủ</a></li>
-        <li><a href="">Giới thiệu</a></li>
+        <li><a href="{% url 'about' %}">Giới thiệu</a></li>
         <li><a href="">Kiến Thức</a></li>
         <li><a href="{% url 'promotions' %}" class="{% if request.resolver_match.url_name == 'promotions' %}active{% endif %}">
             <i class="fas fa-gift"></i> Khuyến Mãi

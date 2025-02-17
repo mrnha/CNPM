@@ -644,4 +644,5 @@ def apply_promotion(request):
         })
 
 
-    
+def about(request):
+    return render(request, 'app/about.html')

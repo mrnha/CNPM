@@ -275,4 +275,55 @@ class PromotionUsage(models.Model):
         verbose_name_plural = "Lịch sử sử dụng khuyến mãi"
         unique_together = ['promotion', 'order']
 
+class AboutContent(models.Model):
+    title = models.CharField(max_length=200, verbose_name="Tiêu đề")
+    content = models.TextField(verbose_name="Nội dung")
+    image = models.ImageField(upload_to='about/', null=True, blank=True, verbose_name="Hình ảnh")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Nội dung giới thiệu"
+        verbose_name_plural = "Nội dung giới thiệu"
+
+    def __str__(self):
+        return self.title
+
+class CoreValue(models.Model):
+    title = models.CharField(max_length=100, verbose_name="Tiêu đề")
+    description = models.TextField(verbose_name="Mô tả")
+    icon = models.CharField(max_length=50, verbose_name="Icon class (Font Awesome)")
+    
+    class Meta:
+        verbose_name = "Giá trị cốt lõi"
+        verbose_name_plural = "Giá trị cốt lõi"
+
+    def __str__(self):
+        return self.title
+
+class ProductCategory(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Tên danh mục")
+    image = models.ImageField(upload_to='categories/', verbose_name="Hình ảnh")
+    
+    class Meta:
+        verbose_name = "Danh mục sản phẩm"
+        verbose_name_plural = "Danh mục sản phẩm"
+
+    def __str__(self):
+        return self.name
+
+class ContactInfo(models.Model):
+    address = models.CharField(max_length=200, verbose_name="Địa chỉ")
+    phone = models.CharField(max_length=20, verbose_name="Số điện thoại")
+    email = models.EmailField(verbose_name="Email")
+    working_hours = models.CharField(max_length=100, verbose_name="Giờ làm việc")
+    map_image = models.ImageField(upload_to='contact/', verbose_name="Hình ảnh bản đồ")
+    
+    class Meta:
+        verbose_name = "Thông tin liên hệ"
+        verbose_name_plural = "Thông tin liên hệ"
+
+    def __str__(self):
+        return self.address
+
 

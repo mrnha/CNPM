@@ -1,10 +1,8 @@
 {% extends 'app/base.html' %}
 {% load static %}
-
 {% block navbar %}
     {% include 'app/navbar.html' %}
 {% endblock navbar %}
-
 {% block main-content %}
 <div class="container mt-5">
     <!-- Banner Section -->
@@ -15,7 +13,6 @@
             <p class="lead text-white">Người bạn đồng hành tin cậy trong hành trình dinh dưỡng của gia đình bạn</p>
         </div>
     </div>
-
     <!-- Story Section -->
     <div class="row mb-5">
         <div class="col-md-6">
@@ -27,7 +24,6 @@
             <img src="{% static 'app/images/store-front.jpg' %}" class="img-fluid rounded" alt="Store Front">
         </div>
     </div>
-
     <!-- Values Section -->
     <div class="row mb-5">
         <div class="col-12 text-center mb-4">
@@ -55,7 +51,6 @@
             </div>
         </div>
     </div>
-
     <!-- Products Section -->
     <div class="row mb-5">
         <div class="col-12 text-center mb-4">
@@ -86,7 +81,6 @@
             </div>
         </div>
     </div>
-
     <!-- Contact Section -->
     <div class="row mb-5">
         <div class="col-md-6">
@@ -106,13 +100,11 @@
         </div>
     </div>
 </div>
-
 <style>
     .about-banner {
         position: relative;
         margin-top: -20px;
     }
-
     .banner-overlay {
         position: absolute;
         top: 50%;
@@ -123,14 +115,12 @@
         border-radius: 10px;
         width: 80%;
     }
-
     .section-title {
         color: #3f51b5;
         margin-bottom: 1.5rem;
         position: relative;
         padding-bottom: 0.5rem;
     }
-
     .section-title::after {
         content: '';
         position: absolute;
@@ -140,22 +130,18 @@
         height: 3px;
         background: #3f51b5;
     }
-
     .value-card {
         padding: 2rem;
         background: #f8f9fa;
         border-radius: 10px;
         transition: transform 0.3s ease;
     }
-
     .value-card:hover {
         transform: translateY(-10px);
     }
-
     .value-card i {
         color: #3f51b5;
     }
-
     .product-category img {
         width: 150px;
         height: 150px;
@@ -163,35 +149,28 @@
         border: 3px solid #3f51b5;
         transition: transform 0.3s ease;
     }
-
     .product-category:hover img {
         transform: scale(1.1);
     }
-
     .contact-info {
         background: #f8f9fa;
         padding: 2rem;
         border-radius: 10px;
     }
-
     .contact-info i {
         color: #3f51b5;
     }
-
     @media (max-width: 768px) {
         .banner-overlay {
             width: 95%;
             padding: 1rem;
         }
-
         .banner-overlay h1 {
             font-size: 2rem;
         }
-
         .value-card {
             margin-bottom: 1rem;
         }
-
         .product-category {
             margin-bottom: 2rem;
         }

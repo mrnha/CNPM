@@ -62,3 +62,22 @@ class PromotionUsageAdmin(admin.ModelAdmin):
 admin.site.register(Promotion, PromotionAdmin)
 admin.site.register(PromotionUsage, PromotionUsageAdmin)
 
+@admin.register(AboutContent)
+class AboutContentAdmin(admin.ModelAdmin):
+    list_display = ('title', 'created_at', 'updated_at')
+    search_fields = ('title', 'content')
+
+@admin.register(CoreValue)
+class CoreValueAdmin(admin.ModelAdmin):
+    list_display = ('title', 'icon')
+    search_fields = ('title', 'description')
+
+@admin.register(ProductCategory)
+class ProductCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+@admin.register(ContactInfo)
+class ContactInfoAdmin(admin.ModelAdmin):
+    list_display = ('address', 'phone', 'email')
+

@@ -384,6 +384,7 @@ def order_detail(request, order_id):
         order = Order.objects.get(id=order_id, Customer=user)
         current_order, created = Order.objects.get_or_create(Customer=user, complete=False)
         cartItems = current_order.get_cart_items
+        profile, created = CustomerProfile.objects.get_or_create(user=user)
         
         shipping = ShippingAddress.objects.filter(order=order).first()
         items = order.orderitem_set.all()
@@ -393,6 +394,7 @@ def order_detail(request, order_id):
             'shipping': shipping,
             'items': items,
             'cartItems': cartItems,
+            'profile': profile,
         }
         return render(request, 'app/account/order_detail.html', context)
     except Order.DoesNotExist:
@@ -645,4 +647,15 @@ def apply_promotion(request):
 
 
 def about(request):
-    return render(request, 'app/about.html')
+    about_content = AboutContent.objects.first()
+    core_values = CoreValue.objects.all()
+    product_categories = ProductCategory.objects.all()
+    contact_info = ContactInfo.objects.first()
+    
+    context = {
+        'about_content': about_content,
+        'core_values': core_values,
+        'product_categories': product_categories,
+        'contact_info': contact_info,
+    }
+    return render(request, 'app/about.html', context)

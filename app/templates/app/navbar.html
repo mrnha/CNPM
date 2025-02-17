@@ -141,37 +141,19 @@
             <!-- Sữa bột dinh dưỡng -->
             <li class="menu-item" data-submenu-id="1">
               <a href="#">
-                <span>SỮA BỘT DINH DƯỠNG</span>
-                <i class="fas fa-chevron-right"></i>
+                
+               
+                {% for category in categories %}
+                <li><a class="dropdown-item" href="{% url 'category'%}?category={{category.slug}}">{{ category.name }}</a></li>
+                {% endfor %}
               </a>
-              <div class="submenu submenu1">
-                <ul class="submenu-grid">
-                  <li>
-                    <a href="">
-                      <div class="brand-image">
-                        <img src="" alt="Abbott">
-                      </div>
-                      <p>Abbott</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="">
-                      <div class="brand-image">
-                        <img src="" alt="Nestle">
-                      </div>
-                      <p>Nestle</p>
-                    </a>
-                  </li>
-                  <!-- Thêm các thương hiệu khác -->
-                </ul>
-              </div>
+              
             </li>
 
             <!-- Sữa nước -->
             <li class="menu-item" data-submenu-id="2">
               <a href="#">
-                <span>SỮA NƯỚC CÁC LOẠI</span>
-                <i class="fas fa-chevron-right"></i>
+                <span></span>
               </a>
               <div class="submenu submenu2">
                 <!-- Nội dung tương tự -->
@@ -187,11 +169,11 @@
       <ul class="main-nav">
         <li><a href="{% url 'home' %}">Trang Chủ</a></li>
         <li><a href="{% url 'about' %}">Giới thiệu</a></li>
-        <li><a href="">Kiến Thức</a></li>
+        <li><a href="http://127.0.0.1:8000/blog/1/">Kiến Thức</a></li>
         <li><a href="{% url 'promotions' %}" class="{% if request.resolver_match.url_name == 'promotions' %}active{% endif %}">
             <i class="fas fa-gift"></i> Khuyến Mãi
         </a></li>
-        <li><a href="">Liên hệ</a></li>
+        <li><a href="{% url 'about' %}">Liên hệ</a></li>
       </ul>
     </div>
   </div>
